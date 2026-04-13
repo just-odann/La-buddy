@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">La-buddy</string>
+    <string name="logo_description">La-buddy laundry basket logo</string>
+    <string name="email_description">Email input icon</string>
+    <string name="password_description">Password input icon</string>
+    <string name="contact_description">Phone contact icon</string>
+
+    <string name="hint_email">Enter your email</string>
+    <string name="hint_password">Create a password</string>
+    <string name="hint_contact">Enter phone number (for delivery)</string>
+
+    <string name="welcome_title">Welcome to La-buddy</string>
+    <string name="signup_instruction">Sign up for smart laundry tracking!</string>
+
+    <string name="sign_up">Sign Up</string>
+    <string name="btn_signup">Sign Up</string>
+    <string name="login_footer">Already have an account? Log In</string>
+    <string name="login_footer2">or continue with</string>
+    <string name="sign_up_description">Sign in with Google</string>
+
+    <string name="hint_password2">Password</string>
+    <string name="login_footer3">Don\'t have an account? Sign Up</string>
+    <string name="motto">Your laundry’s best friend.</string>
+    <string name="btn_login">Log In</string>
+    <string name="text">Welcome Back</string>
+    <string name="btn_google">Google</string>
+    <string name="text2">or continue with</string>
+</resources>
