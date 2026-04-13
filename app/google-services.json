@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "80732671989",
+    "firebase_url": "https://labuddy-34712-default-rtdb.firebaseio.com",
+    "project_id": "labuddy-34712",
+    "storage_bucket": "labuddy-34712.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80732671989:android:6cd8fdf4c2941c157c1abc",
+        "android_client_info": {
+          "package_name": "com.example.la_buddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpJ8HfcIWssKTulrICcStYjKbdr6Lgb7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80732671989:android:7309a2fd9cd8c3b27c1abc",
+        "android_client_info": {
+          "package_name": "com.example.labuddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpJ8HfcIWssKTulrICcStYjKbdr6Lgb7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

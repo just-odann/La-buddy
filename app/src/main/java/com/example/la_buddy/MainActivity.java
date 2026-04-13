@@ -2,59 +2,82 @@ package com.example.la_buddy;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.widget.EditText; // Correct import for standard fields
 import android.widget.TextView;
-import androidx.activity.EdgeToEdge;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
+import androidx.appcompat.widget.AppCompatButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // 1. Initialize Password Toggle Views
-        final TextInputLayout passwordLayout = findViewById(R.id.passwordInputLayout);
-        final TextInputEditText passwordEditText = findViewById(R.id.passwordEditText);
+        // FIX: Match the XML tags exactly
+        final EditText emailField = findViewById(R.id.emailAddress);
+        final TextInputEditText passwordField = findViewById(R.id.passwordEditText);
+        final EditText phoneField = findViewById(R.id.phoneNumber);
 
-        // 2. Initialize Navigation View (Check your XML ID for this)
+        AppCompatButton btnSignUp = findViewById(R.id.btnSignUp);
         TextView tvLoginLink = findViewById(R.id.tvLoginLink);
 
-        // Password Icon Visibility Logic
-        if (passwordLayout != null && passwordEditText != null) {
-            passwordLayout.setEndIconVisible(false);
-            passwordEditText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    passwordLayout.setEndIconVisible(s.length() > 0);
+        if (btnSignUp != null) {
+            btnSignUp.setOnClickListener(v -> {
+                // Null checks to prevent those yellow warnings
+                if (emailField == null || passwordField == null || phoneField == null) return;
+
+                String email = emailField.getText().toString().trim();
+                String password = passwordField.getText().toString().trim();
+                String phone = phoneField.getText().toString().trim();
+
+                if (email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
+                    Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override public void afterTextChanged(Editable s) {}
+
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
+                                String uid = mAuth.getCurrentUser().getUid();
+                                saveUserToDatabase(uid, email, phone);
+                            } else {
+                                String error = (task.getException() != null) ? task.getException().getMessage() : "Unknown Error";
+                                Toast.makeText(this, "Registration Failed: " + error, Toast.LENGTH_LONG).show();
+                            }
+                        });
             });
         }
 
-        // 3. Navigation Logic: Sign Up -> Log In
         if (tvLoginLink != null) {
-            tvLoginLink.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                // We don't usually call finish() here so the user can go 'back' to Sign Up
-            });
+            tvLoginLink.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
         }
+    }
+
+    private void saveUserToDatabase(String uid, String email, String phone) {
+        HashMap<String, Object> userMap = new HashMap<>();
+        userMap.put("email", email);
+        userMap.put("phone", phone);
+        userMap.put("status", "Received");
+        userMap.put("name", email.split("@")[0]);
+
+        mDatabase.child("Orders").child(uid).setValue(userMap)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(MainActivity.this, "Account Registered!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                    finish();
+                });
     }
 }
