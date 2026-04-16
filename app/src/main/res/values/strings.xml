@@ -25,4 +25,11 @@
     <string name="text">Welcome Back</string>
     <string name="btn_google">Google</string>
     <string name="text2">or continue with</string>
+
+    <string name="title1">Home</string>
+    <string name="title">Dashboard</string>
+    <string name="title2">Order History</string>
+    <string name="title3">Profile</string>
+    <string name="title4">Settings</string>
+
 </resources>

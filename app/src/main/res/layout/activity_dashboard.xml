@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_light">
@@ -128,6 +129,7 @@
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -138,29 +140,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Active Order Details"
-                        android:textStyle="bold"
-                        android:textColor="@color/la_buddy_blue"/>
+                        android:textColor="@color/la_buddy_blue"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvOrderId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Order #-----"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:text="Order #-----" />
 
                     <TextView
                         android:id="@+id/tvWeight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Weight: 0.0 kg"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:text="Total Weight: 0.0 kg" />
 
                     <TextView
                         android:id="@+id/tvPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Price: ₱0.00"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -170,10 +172,117 @@
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:background="@color/la_buddy_blue"
+        android:layout_height="70dp"
+        android:background="@color/white"
         android:orientation="horizontal"
+        android:elevation="8dp"
+        android:paddingTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+        android:id="@+id/navHome"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/imgHome"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_home"
+            app:tint="#757575" />
+        <TextView
+            android:id="@+id/tvHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title1"
+            android:textSize="10sp"
+            android:textColor="#757575"
+            tools:ignore="SmallSp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navDashboard"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_dashboard"
+                app:tint="@color/la_buddy_blue" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title"
+                android:textSize="10sp"
+                android:textColor="@color/la_buddy_blue"
+                tools:ignore="SmallSp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navHistory"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_history"
+                app:tint="#757575" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title2"
+                android:textSize="10sp"
+                android:textColor="#757575" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_profile"
+                app:tint="#757575" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title3"
+                android:textSize="10sp"
+                android:textColor="#757575" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_settings"
+                app:tint="#757575" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title4"
+                android:textSize="10sp"
+                android:textColor="#757575" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
