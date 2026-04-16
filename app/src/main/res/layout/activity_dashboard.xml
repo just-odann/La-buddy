@@ -117,11 +117,18 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <include android:id="@+id/step1" layout="@layout/item_timeline_step" />
-            <include android:id="@+id/step2" layout="@layout/item_timeline_step" />
-            <include android:id="@+id/step3" layout="@layout/item_timeline_step" />
-            <include android:id="@+id/step4" layout="@layout/item_timeline_step" />
-            <include android:id="@+id/step5" layout="@layout/item_timeline_step" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include android:id="@+id/step1" layout="@layout/item_timeline_step" />
+                <include android:id="@+id/step2" layout="@layout/item_timeline_step" />
+                <include android:id="@+id/step3" layout="@layout/item_timeline_step" />
+                <include android:id="@+id/step4" layout="@layout/item_timeline_step" />
+                <include android:id="@+id/step5" layout="@layout/item_timeline_step" />
+
+            </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -148,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Order #-----" />
+                        android:text="Order #00000" />
 
                     <TextView
                         android:id="@+id/tvWeight"
@@ -163,7 +170,6 @@
                         android:layout_height="wrap_content"
                         android:text="Price: ₱0.00"
                         android:textStyle="bold" />
-
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -180,26 +186,26 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
-        android:id="@+id/navHome"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-        <ImageView
-            android:id="@+id/imgHome"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_home"
-            app:tint="#757575" />
-        <TextView
-            android:id="@+id/tvHome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title1"
-            android:textSize="10sp"
-            android:textColor="#757575"
-            tools:ignore="SmallSp" />
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imgHome"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_home"
+                app:tint="#757575" />
+            <TextView
+                android:id="@+id/tvHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title1"
+                android:textSize="10sp"
+                android:textColor="#757575"
+                tools:ignore="SmallSp" />
         </LinearLayout>
 
         <LinearLayout

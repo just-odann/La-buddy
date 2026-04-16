@@ -1,62 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingVertical="10dp">
-
-    <ImageView
-        android:id="@+id/stageIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_clipboard" />
-
-
-    <RelativeLayout
-        android:layout_width="40dp"
-        android:layout_height="match_parent">
-
-        <View
-            android:id="@+id/line"
-            android:layout_width="2dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:background="@color/la_buddy_blue" />
-
-        <View
-            android:id="@+id/statusIcon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="15dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/dot_blue" />
-    </RelativeLayout>
+    android:layout_height="70dp"> <View
+    android:id="@+id/timelineLine"
+    android:layout_width="2dp"
+    android:layout_height="match_parent"
+    android:layout_marginStart="31dp"
+    android:background="#D1D9E6" /> <ImageView
+    android:id="@+id/stepIcon"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_centerVertical="true"
+    android:layout_marginStart="20dp"
+    android:background="@drawable/circle_active"
+    android:padding="4dp"
+    android:src="@drawable/ic_clipboard"
+    app:tint="#757575" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/stepIcon"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/stepTitle"
+            android:id="@+id/tvStepTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Washing"
-            android:textColor="#000000"
-            android:textSize="18sp"
+            android:text="Step Title"
+            android:textColor="#1A3E6D"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/stepStatusText"
+            android:id="@+id/tvStepStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Completed"
+            android:text="Pending"
             android:textColor="#757575"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

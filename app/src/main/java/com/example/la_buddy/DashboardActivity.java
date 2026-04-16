@@ -2,14 +2,17 @@ package com.example.la_buddy;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -23,13 +26,15 @@ public class DashboardActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private String currentUid;
 
-    // UI Elements: Profile & Order Details
     private TextView tvUserName, tvOrderId, tvWeight, tvPrice, tvStatusBanner, tvSecurityCode;
     private View readyBanner;
     private ImageView btnLogout;
 
-    // UI Elements: Timeline Steps
+    // Timeline Steps
     private View step1, step2, step3, step4, step5;
+
+    // Bottom Nav Containers
+    private LinearLayout navHome, navDashboard, navHistory, navProfile, navSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,7 @@ public class DashboardActivity extends AppCompatActivity {
         step4 = findViewById(R.id.step4);
         step5 = findViewById(R.id.step5);
 
-        // 3. Bind Views (Header & Details)
+        // 3. Bind Header & Details
         tvUserName = findViewById(R.id.tvUserName);
         tvOrderId = findViewById(R.id.tvOrderId);
         tvWeight = findViewById(R.id.tvWeight);
@@ -61,9 +66,16 @@ public class DashboardActivity extends AppCompatActivity {
         readyBanner = findViewById(R.id.readyBanner);
         btnLogout = findViewById(R.id.btnLogout);
 
+        // 4. Bind Bottom Navigation
+        navHome = findViewById(R.id.navHome);
+        navDashboard = findViewById(R.id.navDashboard);
+        navHistory = findViewById(R.id.navHistory);
+        navProfile = findViewById(R.id.navProfile);
+        navSettings = findViewById(R.id.navSettings);
+
         setupStepStaticContent();
 
-        // 4. Logout Logic
+
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 FirebaseAuth.getInstance().signOut();
@@ -77,98 +89,56 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Extract data from Firebase
                     String name = snapshot.child("name").getValue(String.class);
                     String status = snapshot.child("status").getValue(String.class);
                     String weight = snapshot.child("weight").getValue(String.class);
                     String price = snapshot.child("price").getValue(String.class);
                     String orderId = snapshot.child("orderId").getValue(String.class);
 
-                    // Update UI Details
                     if (name != null) tvUserName.setText("Hello, " + name + "!");
                     if (weight != null) tvWeight.setText("Total Weight: " + weight + " kg");
                     if (price != null) tvPrice.setText("Price: ₱" + price);
                     if (orderId != null) tvOrderId.setText("Order #" + orderId);
 
-                    // Update Timeline Visuals
                     updateTimelineUI(status);
 
-                    // Handle "Ready" state logic
                     if ("Ready".equalsIgnoreCase(status)) {
                         readyBanner.setVisibility(View.VISIBLE);
-                        tvStatusBanner.setText("Order #" + (orderId != null ? orderId : "") + " is READY!");
                         handleReadyState();
                     } else {
                         readyBanner.setVisibility(View.GONE);
-                        tvSecurityCode.setVisibility(View.GONE);
                     }
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(DashboardActivity.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
-
-    private void handleReadyState() {
-        // 1. Manage the 6-Digit Code
-        mDatabase.child("pickupCode").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Object code = task.getResult().getValue();
-                if (code != null) {
-                    tvSecurityCode.setText("Security Code: " + code.toString());
-                    tvSecurityCode.setVisibility(View.VISIBLE);
-                } else {
-                    String newCode = String.valueOf((int)(Math.random() * 900000) + 100000);
-                    mDatabase.child("pickupCode").setValue(newCode);
-                }
-            }
-        });
-
-        // 2. Return Method Selection
-        mDatabase.child("returnMethod").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().getValue() == null) {
-                showReturnMethodDialog();
-            }
-        });
-    }
-
-    private void showReturnMethodDialog() {
-        String[] options = {"Self Pickup", "Home Delivery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Laundry Ready! Choose Return Method:");
-        builder.setItems(options, (dialog, which) -> {
-            String choice = options[which];
-            mDatabase.child("returnMethod").setValue(choice);
-            Toast.makeText(this, "You selected: " + choice, Toast.LENGTH_SHORT).show();
-        });
-        builder.setCancelable(false);
-        builder.show();
-    }
-
-    // --- UI Helpers for Timeline ---
 
     private void setupStepStaticContent() {
+        // Matches the IDs in your item_timeline_step.xml
         setStepData(step1, R.drawable.ic_clipboard, "Received");
         setStepData(step2, R.drawable.ic_washing_machine, "Washing");
         setStepData(step3, R.drawable.ic_drying, "Drying");
         setStepData(step4, R.drawable.ic_folding, "Folding");
         setStepData(step5, R.drawable.ic_check_circle, "Ready");
-        View line5 = step5.findViewById(R.id.line);
+
+        // Hide the line on the very last step
+        View line5 = step5.findViewById(R.id.timelineLine);
         if (line5 != null) line5.setVisibility(View.GONE);
     }
 
     private void setStepData(View view, int iconRes, String title) {
-        ((ImageView) view.findViewById(R.id.stageIcon)).setImageResource(iconRes);
-        ((TextView) view.findViewById(R.id.stepTitle)).setText(title);
+        ((ImageView) view.findViewById(R.id.stepIcon)).setImageResource(iconRes);
+        ((TextView) view.findViewById(R.id.tvStepTitle)).setText(title);
     }
 
     private void updateTimelineUI(String currentStatus) {
         resetAllSteps();
         if (currentStatus == null) return;
 
+        // Uses fall-through switch to highlight all completed stages
         switch (currentStatus) {
             case "Ready": highlightStep(step5, true);
             case "Folding": highlightStep(step4, false);
@@ -180,20 +150,31 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void highlightStep(View view, boolean isFinal) {
-        int color = getResources().getColor(isFinal ? R.color.la_buddy_green : R.color.la_buddy_blue);
-        view.findViewById(R.id.statusIcon).setBackgroundResource(isFinal ? R.drawable.dot_green : R.drawable.dot_blue);
-        ((TextView) view.findViewById(R.id.stepTitle)).setTextColor(color);
-        view.findViewById(R.id.line).setBackgroundColor(color);
+        int color = isFinal ? Color.parseColor("#2E7D32") : Color.parseColor("#1A3E6D");
+        ((TextView) view.findViewById(R.id.tvStepTitle)).setTextColor(color);
+        view.findViewById(R.id.timelineLine).setBackgroundColor(color);
+        ((ImageView) view.findViewById(R.id.stepIcon)).setColorFilter(color);
     }
 
     private void resetAllSteps() {
-        int grey = getResources().getColor(R.color.grey_inactive);
+        int grey = Color.parseColor("#D1D9E6");
         View[] steps = {step1, step2, step3, step4, step5};
         for (View s : steps) {
-            s.findViewById(R.id.statusIcon).setBackgroundResource(R.drawable.dot_grey);
-            ((TextView) s.findViewById(R.id.stepTitle)).setTextColor(grey);
-            s.findViewById(R.id.line).setBackgroundColor(grey);
+            ((TextView) s.findViewById(R.id.tvStepTitle)).setTextColor(Color.GRAY);
+            s.findViewById(R.id.timelineLine).setBackgroundColor(grey);
+            ((ImageView) s.findViewById(R.id.stepIcon)).setColorFilter(grey);
         }
+    }
+
+
+
+    private void handleReadyState() {
+        mDatabase.child("pickupCode").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().getValue() != null) {
+                tvSecurityCode.setText("Code: " + task.getResult().getValue().toString());
+                tvSecurityCode.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void goToLogin() {
