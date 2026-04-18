@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -21,25 +21,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class DashboardActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private String currentUid;
 
-    private TextView tvUserName, tvOrderId, tvWeight, tvPrice, tvStatusBanner, tvSecurityCode;
-    private View readyBanner;
+    private TextView tvUserName, tvOrderId, tvWeight, tvPrice, tvSecurityCode;
+    private View readyBanner, activeOrderCard;
     private ImageView btnLogout;
 
     // Timeline Steps
     private View step1, step2, step3, step4, step5;
 
-    // Bottom Nav Containers
-    private LinearLayout navHome, navDashboard, navHistory, navProfile, navSettings;
+    // Bottom Nav (Updated to 3 items)
+    private LinearLayout navHome, navHistory, navSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_home);
 
         // 1. Firebase Initialization
         currentUid = FirebaseAuth.getInstance().getUid();
@@ -47,6 +47,7 @@ public class DashboardActivity extends AppCompatActivity {
             goToLogin();
             return;
         }
+        // Assuming your Firebase structure is: Orders -> Uid
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Orders").child(currentUid);
 
         // 2. Bind Views (Timeline Steps)
@@ -57,25 +58,24 @@ public class DashboardActivity extends AppCompatActivity {
         step5 = findViewById(R.id.step5);
 
         // 3. Bind Header & Details
-        tvUserName = findViewById(R.id.tvUserName);
+        tvUserName = findViewById(R.id.userName); // Matches your XML id
         tvOrderId = findViewById(R.id.tvOrderId);
         tvWeight = findViewById(R.id.tvWeight);
         tvPrice = findViewById(R.id.tvPrice);
-        tvStatusBanner = findViewById(R.id.tvStatusBanner);
         tvSecurityCode = findViewById(R.id.tvSecurityCode);
         readyBanner = findViewById(R.id.readyBanner);
+        activeOrderCard = findViewById(R.id.activeOrderCard);
         btnLogout = findViewById(R.id.btnLogout);
 
-        // 4. Bind Bottom Navigation
+        // 4. Bind Bottom Navigation (Simplified to 3)
         navHome = findViewById(R.id.navHome);
-        navDashboard = findViewById(R.id.navDashboard);
         navHistory = findViewById(R.id.navHistory);
-        navProfile = findViewById(R.id.navProfile);
         navSettings = findViewById(R.id.navSettings);
 
+        // Initialize Step Content with alternating logic
         setupStepStaticContent();
 
-
+        // Logout Logic
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 FirebaseAuth.getInstance().signOut();
@@ -89,25 +89,29 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    activeOrderCard.setVisibility(View.VISIBLE); // Show if order exists
+
                     String name = snapshot.child("name").getValue(String.class);
                     String status = snapshot.child("status").getValue(String.class);
                     String weight = snapshot.child("weight").getValue(String.class);
                     String price = snapshot.child("price").getValue(String.class);
                     String orderId = snapshot.child("orderId").getValue(String.class);
 
-                    if (name != null) tvUserName.setText("Hello, " + name + "!");
+                    if (name != null) tvUserName.setText(name + "!");
                     if (weight != null) tvWeight.setText("Total Weight: " + weight + " kg");
                     if (price != null) tvPrice.setText("Price: ₱" + price);
                     if (orderId != null) tvOrderId.setText("Order #" + orderId);
 
                     updateTimelineUI(status);
 
+                    // Show claim code only at Stage 5
                     if ("Ready".equalsIgnoreCase(status)) {
-                        readyBanner.setVisibility(View.VISIBLE);
                         handleReadyState();
                     } else {
-                        readyBanner.setVisibility(View.GONE);
+                        tvSecurityCode.setVisibility(View.GONE);
                     }
+                } else {
+                    activeOrderCard.setVisibility(View.GONE); // Hide if no active order
                 }
             }
 
@@ -117,28 +121,43 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupStepStaticContent() {
-        // Matches the IDs in your item_timeline_step.xml
-        setStepData(step1, R.drawable.ic_clipboard, "Received");
-        setStepData(step2, R.drawable.ic_washing_machine, "Washing");
-        setStepData(step3, R.drawable.ic_drying, "Drying");
-        setStepData(step4, R.drawable.ic_folding, "Folding");
-        setStepData(step5, R.drawable.ic_check_circle, "Ready");
+        setStepData(step1, R.drawable.ic_clipboard, "Stage 1", "Received", false);
+        setStepData(step2, R.drawable.ic_washing_machine, "Stage 2", "Washing", true); // Flip to Left
+        setStepData(step3, R.drawable.ic_drying, "Stage 3", "Drying", false);
+        setStepData(step4, R.drawable.ic_folding, "Stage 4", "Folding", true); // Flip to Left
+        setStepData(step5, R.drawable.ic_check_circle, "Stage 5", "Ready", false);
 
-        // Hide the line on the very last step
+        // Final line removal
         View line5 = step5.findViewById(R.id.timelineLine);
         if (line5 != null) line5.setVisibility(View.GONE);
     }
 
-    private void setStepData(View view, int iconRes, String title) {
+    private void setStepData(View view, int iconRes, String stageLabel, String title, boolean flipToLeft) {
         ((ImageView) view.findViewById(R.id.stepIcon)).setImageResource(iconRes);
+        ((TextView) view.findViewById(R.id.tvStepLabel)).setText(stageLabel);
         ((TextView) view.findViewById(R.id.tvStepTitle)).setText(title);
+
+        if (flipToLeft) {
+            ConstraintLayout layout = (ConstraintLayout) view;
+            ConstraintSet set = new ConstraintSet();
+            set.clone(layout);
+
+            // Move Label to left of icon
+            set.clear(R.id.tvStepLabel, ConstraintSet.START);
+            set.connect(R.id.tvStepLabel, ConstraintSet.END, R.id.stepIcon, ConstraintSet.START, 32);
+
+            // Move Title to left of icon
+            set.clear(R.id.tvStepTitle, ConstraintSet.START);
+            set.connect(R.id.tvStepTitle, ConstraintSet.END, R.id.stepIcon, ConstraintSet.START, 32);
+
+            set.applyTo(layout);
+        }
     }
 
     private void updateTimelineUI(String currentStatus) {
         resetAllSteps();
         if (currentStatus == null) return;
 
-        // Uses fall-through switch to highlight all completed stages
         switch (currentStatus) {
             case "Ready": highlightStep(step5, true);
             case "Folding": highlightStep(step4, false);
@@ -150,7 +169,8 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void highlightStep(View view, boolean isFinal) {
-        int color = isFinal ? Color.parseColor("#2E7D32") : Color.parseColor("#1A3E6D");
+        // Lively Blue for active stages, Dark Green for finalized
+        int color = isFinal ? Color.parseColor("#2E7D32") : Color.parseColor("#1A73E8");
         ((TextView) view.findViewById(R.id.tvStepTitle)).setTextColor(color);
         view.findViewById(R.id.timelineLine).setBackgroundColor(color);
         ((ImageView) view.findViewById(R.id.stepIcon)).setColorFilter(color);
@@ -166,12 +186,10 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void handleReadyState() {
         mDatabase.child("pickupCode").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().getValue() != null) {
-                tvSecurityCode.setText("Code: " + task.getResult().getValue().toString());
+                tvSecurityCode.setText("Claim Code: " + task.getResult().getValue().toString());
                 tvSecurityCode.setVisibility(View.VISIBLE);
             }
         });
@@ -179,7 +197,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void goToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

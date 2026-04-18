@@ -1,10 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#E3F2FD"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp">
@@ -14,24 +14,21 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        tools:ignore="UseCompoundDrawables">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="126dp"
             android:layout_height="130dp"
             android:layout_marginBottom="-5dp"
-            android:contentDescription="@null"
             app:srcCompat="@drawable/labuddy_logo"
-            app:tint="#1A3E6D"
+            app:tint="#1A73E8"
             app:tintMode="src_in" />
 
         <TextView
             android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
             android:text="@string/app_name"
             android:textColor="#1A3E6D"
             android:textSize="26sp"
@@ -39,11 +36,11 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="87dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/sign_up"
-        android:textColor="#000000"
+        android:textColor="#FF000000"
         android:textSize="22sp"
         android:textStyle="bold" />
 
@@ -60,15 +57,13 @@
         android:layout_height="55dp"
         android:layout_marginHorizontal="25dp"
         android:layout_marginBottom="12dp"
-        android:autofillHints="emailAddress"
         android:background="@drawable/round_input"
         android:hint="@string/hint_email"
-        android:importantForAutofill="yes"
         android:inputType="textEmailAddress"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:textColorHint="#9E9E9E"
-        tools:ignore="TextContrastCheck" />
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordInputLayout"
@@ -76,17 +71,26 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
         android:layout_marginBottom="12dp"
-        app:hintEnabled="false">
+        app:hintEnabled="false"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="#1A73E8">
 
         <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@drawable/round_input"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword"
-        android:paddingStart="20dp"
-        android:paddingEnd="45dp" />
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/round_input"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:paddingStart="20dp"
+            android:paddingEnd="45dp"
+            android:textColor="#000000"
+            android:textColorHint="#9E9E9E"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:gravity="center_vertical"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,9 +104,8 @@
         android:inputType="phone"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:textColorHint="#9E9E9E"
-        android:importantForAutofill="yes"
-        android:autofillHints="phone" />
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSignUp"
@@ -111,12 +114,12 @@
         android:layout_marginHorizontal="25dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/button_round"
+        android:backgroundTint="#1A73E8"
         android:text="@string/sign_up"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:textStyle="bold"
-        tools:ignore="DuplicateSpeakableTextCheck" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvLoginLink"
@@ -136,8 +139,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:text="@string/login_footer2"
-        android:textColor="#9E9E9E"
-        tools:ignore="TextContrastCheck" />
+        android:textColor="#9E9E9E" />
 
     <ImageButton
         android:id="@+id/btnGoogle"
@@ -145,10 +147,9 @@
         android:layout_height="50dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/round_input"
-        android:contentDescription="@string/sign_up_description"
+        android:contentDescription="@string/btn_google"
         android:padding="12dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_google"
-        tools:ignore="ImageContrastCheck" />
+        android:src="@drawable/ic_google" />
 
 </LinearLayout>
