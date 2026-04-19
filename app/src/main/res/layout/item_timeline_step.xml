@@ -13,30 +13,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <View
+        android:id="@+id/stepDot"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="@drawable/circle_sky_blue"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/timelineLine"
+        app:layout_constraintStart_toStartOf="@id/timelineLine"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/stepIcon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:background="@drawable/circle_white_bg"
-        android:elevation="2dp"
-        android:padding="6dp"
+        android:layout_marginStart="70dp"
         android:src="@drawable/ic_clipboard"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/timelineLine"
-        app:layout_constraintStart_toStartOf="@id/timelineLine"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#757575" />
+        />
 
     <TextView
         android:id="@+id/tvStepLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:text="Stage 1"
         android:textColor="#757575"
         android:textSize="11sp"
-        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toTopOf="@id/tvStepTitle"
-        app:layout_constraintStart_toEndOf="@id/stepIcon"
+        app:layout_constraintStart_toEndOf="@id/stepDot"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -44,13 +52,13 @@
         android:id="@+id/tvStepTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:text="Received"
         android:textColor="#1A3E6D"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/stepIcon"
+        app:layout_constraintStart_toEndOf="@id/stepDot"
         app:layout_constraintTop_toBottomOf="@id/tvStepLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

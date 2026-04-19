@@ -32,4 +32,20 @@
     <string name="title3">Profile</string>
     <string name="title4">Settings</string>
 
+    <string name="desc_contact_support">Contact Laundry Support</string>
+    <string name="desc_profile">Profile</string>
+    <string name="text_greetings">"Good morning, Jordan!"</string>
+    <string name="desc_exit">Exit</string>
+    <string name="text_book">"Book a Wash"</string>
+    <string name="text_order_num">"Order #00001"</string>
+    <string name="text_status">Live Status</string>
+    <string name="text_summary">Order Summary</string>
+    <string name="text_weight">Weight: 0.0 kg</string>
+    <string name="text_price">Price: ₱0.00</string>
+    <string name="text_info">Service Information</string>
+    <string name="desc_price">Price list</string>
+    <string name="text_price_list">Price List</string>
+    <string name="desc_service">Service</string>
+    <string name="text_services">Services</string>
+
 </resources>

@@ -21,15 +21,15 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_profile"
-            app:tint="#1A73E8" />
+            android:contentDescription="@string/desc_profile"
+            android:src="@drawable/ic_profile" />
 
         <TextView
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Good morning, Jordan!"
+            android:text="@string/text_greetings"
             android:textColor="#1A3E6D"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -37,12 +37,13 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/btnLogout"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="@string/desc_exit"
             android:src="@drawable/ic_lock"
             app:tint="#1A3E6D" />
     </LinearLayout>
@@ -60,94 +61,93 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnBookWash"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:background="@drawable/button_round"
-                android:backgroundTint="#1A73E8"
-                android:elevation="4dp"
-                android:text="Book a Wash"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnBookWash"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@drawable/button_round"
+            android:backgroundTint="#1A73E8"
+            android:text="@string/text_book"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/activeOrderCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="6dp">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/activeOrderCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="8dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/tvOrderId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Order #12345"
-                        android:textColor="#1A73E8"
-                        android:textStyle="bold" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
 
-                    <include layout="@layout/item_timeline_step" android:id="@+id/step1" />
-                    <include layout="@layout/item_timeline_step" android:id="@+id/step2" />
-                    <include layout="@layout/item_timeline_step" android:id="@+id/step3" />
-                    <include layout="@layout/item_timeline_step" android:id="@+id/step4" />
-                    <include layout="@layout/item_timeline_step" android:id="@+id/step5" />
+        <TextView
+            android:id="@+id/tvOrderId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_order_num"
+            android:textColor="#1A73E8"
+            android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="16dp"
-                        android:background="#D1D9E6" />
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentEnd="true"
+             android:background="#E8F5E9"
+             android:paddingHorizontal="8dp"
+             android:text="@string/text_status"
+             android:textColor="#2E7D32"
+             android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="12dp">
+         </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Active Order Details"
-                        android:textColor="#1A73E8"
-                        android:textStyle="bold" />
+            <include android:id="@+id/step1" layout="@layout/item_timeline_step" />
+            <include android:id="@+id/step2" layout="@layout/item_timeline_step" />
+            <include android:id="@+id/step3" layout="@layout/item_timeline_step" />
+            <include android:id="@+id/step4" layout="@layout/item_timeline_step" />
+            <include android:id="@+id/step5" layout="@layout/item_timeline_step" />
 
-                    <TextView
-                        android:id="@+id/tvWeight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Total Weight: 0.0 kg"
-                        android:textColor="#000000" />
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="20dp"
+             android:background="#F0F7FF"
+             android:padding="16dp"
+             android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Price: ₱0.00"
-                        android:textColor="#000000"
-                        android:textStyle="bold" />
-                    </LinearLayout>
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/text_summary"
+              android:textStyle="bold"
+              android:textColor="#1A3E6D"/>
 
-                    <TextView
-                        android:id="@+id/tvSecurityCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:background="#E8F5E9"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="Claim Code: ---"
-                        android:textColor="#2E7D32"
-                        android:textStyle="bold"
-                        android:visibility="gone"/>
+           <TextView
+               android:id="@+id/tvWeight"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/text_weight"
+               android:textColor="#546E7A" />
+
+             <TextView
+                 android:id="@+id/tvPrice"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/text_price"
+                 android:textColor="#1A3E6D" />
+         </LinearLayout>
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -156,7 +156,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="More Information"
+                android:text="@string/text_info"
                 android:textColor="#1A3E6D"
                 android:textStyle="bold" />
 
@@ -164,10 +164,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:columnCount="2"
-                android:rowCount="2">
+                android:columnCount="2">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardPriceList"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:contentDescription="@string/desc_price"
+                    android:src="@drawable/ic_price_list" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_price_list"
+                    android:textColor="#1A3E6D" />
+                </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cardServices"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_columnWeight="1"
@@ -178,90 +211,122 @@
                     android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
-                    android:gravity="center" android:orientation="vertical" android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="UseCompoundDrawables">
 
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_clipboard" app:tint="#1A73E8"/>
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:contentDescription="@string/desc_service"
+                    android:src="@drawable/ic_service" />
 
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Price List" android:textColor="#1A3E6D"/>
-
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="@string/text_services"
+                     android:textColor="#1A3E6D" />
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground">
-
-                    <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
-
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_google" app:tint="#FFD600"/>
-
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Promos" android:textColor="#1A3E6D"/>
-
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_home" app:tint="#1A73E8"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Store Info" android:textColor="#1A3E6D"/>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
             </GridLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:baselineAligned="false"
+        android:src="@drawable/ic_message"
+        app:backgroundTint="#1A73E8"
+        app:tint="#FFFFFF"
+        android:contentDescription="@string/desc_contact_support"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="#FFFFFF"
+        android:baselineAligned="false"
         android:elevation="12dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/navHome"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_home"
-                app:tint="#1A73E8"/>
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="Home"
+        android:src="@drawable/ic_home"
+        app:tint="#1A73E8"/>
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Home" android:textColor="#1A73E8" android:textSize="12sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:textColor="#1A73E8"
+        android:textSize="12sp"/>
+    </LinearLayout>
+
+     <LinearLayout
+         android:id="@+id/navHistory"
+         android:layout_width="0dp"
+         android:layout_height="match_parent"
+         android:layout_weight="1"
+         android:gravity="center"
+         android:orientation="vertical">
+
+     <ImageView
+         android:layout_width="24dp"
+         android:layout_height="24dp"
+         android:contentDescription="Order History"
+         android:src="@drawable/ic_history"
+         app:tint="#757575"/>
+
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/title2"
+         android:textColor="#757575"
+         android:textSize="12sp"/>
+     </LinearLayout>
+
+      <LinearLayout
+          android:id="@+id/navSettings"
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1"
+          android:gravity="center"
+          android:orientation="vertical">
+
+      <ImageView
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:contentDescription="Settings"
+          android:src="@drawable/ic_settings"
+          app:tint="#757575"/>
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/title4"
+          android:textColor="#757575"
+          android:textSize="12sp"/>
         </LinearLayout>
 
-        <LinearLayout android:id="@+id/navHistory" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
-            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_history" app:tint="#757575"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="History" android:textColor="#757575" android:textSize="12sp"/>
-        </LinearLayout>
-
-        <LinearLayout android:id="@+id/navSettings" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
-            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_settings" app:tint="#757575"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Settings" android:textColor="#757575" android:textSize="12sp"/>
-        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
