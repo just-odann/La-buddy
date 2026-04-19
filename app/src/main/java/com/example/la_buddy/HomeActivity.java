@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +32,10 @@ public class HomeActivity extends AppCompatActivity {
     private View activeOrderCard;
     private ImageView btnLogout;
     private FloatingActionButton fabContact;
+
+    // Added for new UI elements
+    private View btnBookWash;
+    private CardView cardPriceList, cardStoreInfo;
 
     private View step1, step2, step3, step4, step5;
     private LinearLayout navHome, navHistory, navSettings;
@@ -58,12 +64,17 @@ public class HomeActivity extends AppCompatActivity {
         tvWeight = findViewById(R.id.tvWeight);
         tvPrice = findViewById(R.id.tvPrice);
 
-        // CRITICAL FIX: Initialize tvSecurityCode so the app doesn't crash
-        // tvSecurityCode = findViewById(R.id.tvSecurityCode);
+        // RE-ENABLED: This is needed for the Stage 5 Ready state
+        tvSecurityCode = findViewById(R.id.tvSecurityCode);
 
         activeOrderCard = findViewById(R.id.activeOrderCard);
         btnLogout = findViewById(R.id.btnLogout);
         fabContact = findViewById(R.id.fabContact);
+
+        // BIND NEW BUTTONS
+        btnBookWash = findViewById(R.id.btnBookWash);
+        cardPriceList = findViewById(R.id.cardPriceList);
+        cardStoreInfo = findViewById(R.id.cardStoreInfo);
 
         navHome = findViewById(R.id.navHome);
         navHistory = findViewById(R.id.navHistory);
@@ -80,6 +91,34 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
+        // NEW: Book a Wash Listener
+        if (btnBookWash != null) {
+            btnBookWash.setOnClickListener(v -> {
+                // Create the Intent to go from Home to Booking
+                Intent intent = new Intent(HomeActivity.this, BookingActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        // NEW: Price List Listener (Using the Bottom Sheet we discussed)
+        if (cardPriceList != null) {
+            cardPriceList.setOnClickListener(v -> {
+                // This triggers the Price Menu sliding panel
+                PriceMenuSheet priceSheet = new PriceMenuSheet();
+                priceSheet.show(getSupportFragmentManager(), "PriceMenu");
+            });
+        }
+
+        // NEW: Store Info / Map Listener
+        if (cardStoreInfo != null) {
+            cardStoreInfo.setOnClickListener(v -> {
+                Uri gmmIntentUri = Uri.parse("geo:14.2833,122.7833?q=Laundry+Shop");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            });
+        }
+
         if (fabContact != null) {
             fabContact.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -93,7 +132,6 @@ public class HomeActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // If user exists in DB, show card; otherwise keep it hidden but keep app open
                 if (snapshot.exists()) {
                     activeOrderCard.setVisibility(View.VISIBLE);
 
@@ -110,8 +148,8 @@ public class HomeActivity extends AppCompatActivity {
 
                     updateTimelineUI(status);
 
-                    // Added safety check for tvSecurityCode
-                    if ("Ready".equalsIgnoreCase(status) && tvSecurityCode != null) {
+                    // Show claim code only if Ready
+                    if ("Ready".equalsIgnoreCase(status)) {
                         handleReadyState();
                     } else if (tvSecurityCode != null) {
                         tvSecurityCode.setVisibility(View.GONE);
@@ -125,6 +163,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
+
+    // ... (rest of the helper methods: setupStepStaticContent, updateTimelineUI, etc. remain the same)
 
     private void setupStepStaticContent() {
         setStepData(step1, R.drawable.ic_clipboard, "Stage 1", "Received");

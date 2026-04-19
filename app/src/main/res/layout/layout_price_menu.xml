@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:background="#D1D9E6"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LA-Buddy Full Service Menu"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1A3E6D"
+            android:layout_marginBottom="24dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardBackgroundColor="#E3F2FD"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Student Saver "
+                    android:textColor="#1A73E8"
+                    android:textStyle="bold"
+                    android:textSize="15sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• 10% Discount on Regular Wash\n• Free Pick-up &amp; Delivery (Daet Area)\n• Free Fabric Softener"
+                    android:textColor="#1A3E6D"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="REGULAR SERVICES (PER KG)"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#1A73E8"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <include layout="@layout/item_price_row" android:id="@+id/rowClothes" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Clothes / Everyday Wear" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱90.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Blanket / Bed Sheets" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱100.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Curtains" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱125.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Denim / Jeans" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱85.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BARO'T SAYA &amp; BARONG"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#1A73E8"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Baro't Saya (Dress)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱605.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Barong (Long Sleeves)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱355.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Barong (Short Sleeves)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱305.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="POLOS &amp; SUITS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#1A73E8"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Suit (Top)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱305.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Suit (Bottom)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱255.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Polo (Long Sleeve)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₱155.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SOAPS &amp; FABRIC CARE"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#1A73E8"
+            android:letterSpacing="0.1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Premium Detergents"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="#64748B"
+                    android:layout_marginBottom="8dp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Standard Liquid Detergent" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FREE" android:textStyle="bold" android:textColor="#2E7D32"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ariel / Tide / Pride (per load)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+₱15.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F1F5F9"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fabric Conditioners"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="#64748B"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Downy (Garden Bloom/Sunrise)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+₱20.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Surf FabCon (per load)" android:textColor="#1A3E6D"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+₱12.00" android:textStyle="bold" android:textColor="#1A73E8"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="*Prices are subject to change based on fabric sensitivity.\nStandard turnaround: 24 hours."
+            android:textSize="11sp"
+            android:textColor="#94A3B8"
+            android:gravity="center"
+            android:textStyle="italic" />
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

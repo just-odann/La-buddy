@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Schedule a Booking"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1A3E6D" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+            <LinearLayout
+                android:padding="16dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Service Category" android:textSize="12sp" android:textColor="#64748B"/>
+                <Spinner android:id="@+id/spinnerCategory" android:layout_width="match_parent" android:layout_height="48dp" android:entries="@array/service_categories"/>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" android:layout_marginVertical="8dp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Specific Item" android:textSize="12sp" android:textColor="#64748B"/>
+                <Spinner android:id="@+id/spinnerItems" android:layout_width="match_parent" android:layout_height="48dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Add-ons" android:layout_marginTop="20dp" android:textStyle="bold" android:textColor="#1A3E6D"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="12dp">
+            <LinearLayout android:padding="12dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <CheckBox android:id="@+id/cbAriel" android:text="Ariel Liquid (+₱15)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <CheckBox android:id="@+id/cbDowny" android:text="Downy Softener (+₱20)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardBackgroundColor="#E0F2F1"
+            app:cardCornerRadius="12dp">
+            <LinearLayout android:padding="16dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchStudent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Apply Student Discount (10%)"
+                    android:textStyle="bold"
+                    android:textColor="#00695C"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="*Show ID to rider upon pickup" android:textSize="10sp" android:textColor="#00695C"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Delivery Method" android:layout_marginTop="20dp" android:textStyle="bold"/>
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleMethod" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" app:singleSelection="true" app:selectionRequired="true">
+            <Button android:id="@+id/btnModePickup" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Pick-up" />
+            <Button android:id="@+id/btnModeDropoff" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Drop-off" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <Button
+            android:id="@+id/btnProcessOrder"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#1A73E8"
+            android:text="Process Booking"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
