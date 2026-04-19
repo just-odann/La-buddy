@@ -36,7 +36,7 @@
     <string name="desc_profile">Profile</string>
     <string name="text_greetings">"Good morning, Jordan!"</string>
     <string name="desc_exit">Exit</string>
-    <string name="text_book">"Book a Wash"</string>
+    <string name="text_book">"Book a Service"</string>
     <string name="text_order_num">"Order #00001"</string>
     <string name="text_status">Live Status</string>
     <string name="text_summary">Order Summary</string>
@@ -44,7 +44,7 @@
     <string name="text_price">Price: ₱0.00</string>
     <string name="text_info">Service Information</string>
     <string name="desc_price">Price list</string>
-    <string name="text_price_list">Price List</string>
+    <string name="text_price_list">Service Menu</string>
     <string name="desc_service">Service</string>
     <string name="text_services">Services</string>
     <string name="desc_home">Home</string>
@@ -61,36 +61,41 @@
 
 
         <string-array name="service_categories">
-            <item>Select Category</item>
-            <item>Regular (Wash-Dry-Fold)</item>
-            <item>Premium &amp; Specialty</item>
+            <item>Choose a category...</item>
+            <item>Regular Services</item>
+            <item>Baro\'t Saya &amp; Barong</item>
+            <item>Polos &amp; Suits</item>
         </string-array>
 
-        <string-array name="regular_items"
-            tools:ignore="DuplicateDefinition">
-            <item>Clothes (Everyday) - ₱90/kg</item>
-            <item>Blankets/Sheets - ₱100/kg</item>
-            <item>Curtains - ₱125/kg</item>
-            <item>Denim/Jeans - ₱85/kg</item>
+        <string-array name="regular_items">
+            <item>Clothes / Everyday Wear - ₱90.00</item>
+            <item>Blanket / Bed Sheets - ₱100.00</item>
+            <item>Curtains - ₱125.00</item>
+            <item>Denim / Jeans - ₱85.00</item>
         </string-array>
 
-        <string-array name="premium_items"
-            tools:ignore="DuplicateDefinition">
-            <item>Barong (Long Sleeve) - ₱355</item>
-            <item>Baro\'t Saya Set - ₱605</item>
-            <item>Evening Gown - ₱705</item>
-            <item>Suit (Top) - ₱305</item>
+
+        <string-array name="specialty_items">
+            <item>Baro\'t Saya (Dress) - ₱605.00</item>
+            <item>Barong (Long Sleeves) - ₱355.00</item>
+            <item>Barong (Short Sleeves) - ₱305.00</item>
         </string-array>
+
+    <string-array name="polo_items">
+        <item>Suit (Top) - ₱305.00</item>
+        <item>Suit (Bottom) - ₱255.00</item>
+        <item>Polo (Long Sleeve) - ₱155.00</item>
+    </string-array>
 
         <string-array name="detergent_options">
-            <item>Standard Liquid (FREE)</item>
-            <item>Ariel / Tide / Pride (+₱15)</item>
+            <item>Standard Liquid Detergent (FREE)</item>
+            <item>Ariel / Tide / Pride (+₱15.00)</item>
         </string-array>
 
         <string-array name="fabcon_options">
             <item>None</item>
-            <item>Downy (Garden/Sunrise) (+₱20)</item>
-            <item>Surf FabCon (+₱12)</item>
+            <item>Downy (Garden/Sunrise) (+₱20.00)</item>
+            <item>Surf FabCon (+₱12.00)</item>
         </string-array>
 
 

@@ -29,16 +29,14 @@ public class HomeActivity extends AppCompatActivity {
     private String currentUid;
 
     private TextView tvUserName, tvOrderId, tvWeight, tvPrice, tvSecurityCode;
-    private View activeOrderCard;
+    private View activeOrderCard, timelineContainer;
     private ImageView btnLogout;
     private FloatingActionButton fabContact;
 
-    // Added for new UI elements
     private View btnBookWash;
     private CardView cardPriceList, cardStoreInfo;
 
     private View step1, step2, step3, step4, step5;
-    private LinearLayout navHome, navHistory, navSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +48,14 @@ public class HomeActivity extends AppCompatActivity {
             goToLogin();
             return;
         }
+
+        // Points to the Orders node for this specific user
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Orders").child(currentUid);
 
         // 1. BIND VIEWS
+        timelineContainer = findViewById(R.id.timelineContainer);
+        activeOrderCard = findViewById(R.id.activeOrderCard);
+
         step1 = findViewById(R.id.step1);
         step2 = findViewById(R.id.step2);
         step3 = findViewById(R.id.step3);
@@ -63,27 +66,32 @@ public class HomeActivity extends AppCompatActivity {
         tvOrderId = findViewById(R.id.tvOrderId);
         tvWeight = findViewById(R.id.tvWeight);
         tvPrice = findViewById(R.id.tvPrice);
-
-        // RE-ENABLED: This is needed for the Stage 5 Ready state
         tvSecurityCode = findViewById(R.id.tvSecurityCode);
 
-        activeOrderCard = findViewById(R.id.activeOrderCard);
         btnLogout = findViewById(R.id.btnLogout);
         fabContact = findViewById(R.id.fabContact);
-
-        // BIND NEW BUTTONS
         btnBookWash = findViewById(R.id.btnBookWash);
         cardPriceList = findViewById(R.id.cardPriceList);
         cardStoreInfo = findViewById(R.id.cardStoreInfo);
 
-        navHome = findViewById(R.id.navHome);
-        navHistory = findViewById(R.id.navHistory);
-        navSettings = findViewById(R.id.navSettings);
-
-        if (activeOrderCard != null) activeOrderCard.setVisibility(View.GONE);
+        // INITIAL STATE: Everything hidden until data is confirmed
+        hideBookingUI();
         setupStepStaticContent();
 
         // 2. LISTENERS
+        if (btnBookWash != null) {
+            btnBookWash.setOnClickListener(v -> {
+                try {
+                    Intent intent = new Intent(HomeActivity.this, BookingActivity.class);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // This Toast will tell us the REAL reason (e.g., ActivityNotFound or NullPointer)
+                    Toast.makeText(HomeActivity.this, "Crash Reason: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            });
+        }
+
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 FirebaseAuth.getInstance().signOut();
@@ -91,27 +99,9 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        // NEW: Book a Wash Listener
-        if (btnBookWash != null) {
-            btnBookWash.setOnClickListener(v -> {
-                // Create the Intent to go from Home to Booking
-                Intent intent = new Intent(HomeActivity.this, BookingActivity.class);
-                startActivity(intent);
-            });
-        }
-
-        // NEW: Price List Listener (Using the Bottom Sheet we discussed)
-        if (cardPriceList != null) {
-            cardPriceList.setOnClickListener(v -> {
-                // This triggers the Price Menu sliding panel
-                PriceMenuSheet priceSheet = new PriceMenuSheet();
-                priceSheet.show(getSupportFragmentManager(), "PriceMenu");
-            });
-        }
-
-        // NEW: Store Info / Map Listener
         if (cardStoreInfo != null) {
             cardStoreInfo.setOnClickListener(v -> {
+                // Geo-coordinates for Paracale area
                 Uri gmmIntentUri = Uri.parse("geo:14.2833,122.7833?q=Laundry+Shop");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -119,43 +109,38 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        if (fabContact != null) {
-            fabContact.setOnClickListener(v -> {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:09123456789"));
-                startActivity(intent);
-            });
-        }
-
         // 3. FIREBASE LIVE LISTENER
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.limitToLast(1).addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    activeOrderCard.setVisibility(View.VISIBLE);
+                if (snapshot.exists() && snapshot.hasChildren()) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        String status = data.child("status").getValue(String.class);
 
-                    String name = snapshot.child("name").getValue(String.class);
-                    String status = snapshot.child("status").getValue(String.class);
-                    String weight = snapshot.child("weight").getValue(String.class);
-                    String price = snapshot.child("price").getValue(String.class);
-                    String orderId = snapshot.child("orderId").getValue(String.class);
+                        // ONLY SHOW if Admin has updated the status to something valid
+                        if (status != null && !status.equalsIgnoreCase("None") && !status.isEmpty()) {
+                            showBookingUI();
+                            updateTimelineUI(status);
 
-                    if (name != null) tvUserName.setText("Good morning, " + name + "!");
-                    if (weight != null) tvWeight.setText("Weight: " + weight + " kg");
-                    if (price != null) tvPrice.setText("₱" + price);
-                    if (orderId != null) tvOrderId.setText("Order #" + orderId);
+                            String weight = data.child("weight").getValue(String.class);
+                            String price = data.child("price").getValue(String.class);
 
-                    updateTimelineUI(status);
+                            if (tvWeight != null) tvWeight.setText("Weight: " + (weight != null ? weight : "0") + " kg");
+                            if (tvPrice != null) tvPrice.setText("₱" + (price != null ? price : "0"));
+                            if (tvOrderId != null) tvOrderId.setText("Order #" + data.getKey().substring(1, 7).toUpperCase());
 
-                    // Show claim code only if Ready
-                    if ("Ready".equalsIgnoreCase(status)) {
-                        handleReadyState();
-                    } else if (tvSecurityCode != null) {
-                        tvSecurityCode.setVisibility(View.GONE);
+                            if ("Ready".equalsIgnoreCase(status)) {
+                                handleReadyState(data);
+                            } else if (tvSecurityCode != null) {
+                                tvSecurityCode.setVisibility(View.GONE);
+                            }
+                        } else {
+                            hideBookingUI();
+                        }
                     }
                 } else {
-                    activeOrderCard.setVisibility(View.GONE);
+                    hideBookingUI();
                 }
             }
 
@@ -164,7 +149,15 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    // ... (rest of the helper methods: setupStepStaticContent, updateTimelineUI, etc. remain the same)
+    private void showBookingUI() {
+        if (timelineContainer != null) timelineContainer.setVisibility(View.VISIBLE);
+        if (activeOrderCard != null) activeOrderCard.setVisibility(View.VISIBLE);
+    }
+
+    private void hideBookingUI() {
+        if (timelineContainer != null) timelineContainer.setVisibility(View.GONE);
+        if (activeOrderCard != null) activeOrderCard.setVisibility(View.GONE);
+    }
 
     private void setupStepStaticContent() {
         setStepData(step1, R.drawable.ic_clipboard, "Stage 1", "Received");
@@ -172,16 +165,17 @@ public class HomeActivity extends AppCompatActivity {
         setStepData(step3, R.drawable.ic_drying, "Stage 3", "Drying");
         setStepData(step4, R.drawable.ic_folding, "Stage 4", "Folding");
         setStepData(step5, R.drawable.ic_check_circle, "Stage 5", "Ready");
-
-        View line5 = step5.findViewById(R.id.timelineLine);
-        if (line5 != null) line5.setVisibility(View.GONE);
     }
 
     private void setStepData(View view, int iconRes, String stageLabel, String title) {
         if (view == null) return;
-        ((ImageView) view.findViewById(R.id.stepIcon)).setImageResource(iconRes);
-        ((TextView) view.findViewById(R.id.tvStepLabel)).setText(stageLabel);
-        ((TextView) view.findViewById(R.id.tvStepTitle)).setText(title);
+        ImageView icon = view.findViewById(R.id.stepIcon);
+        TextView label = view.findViewById(R.id.tvStepLabel);
+        TextView stepTitle = view.findViewById(R.id.tvStepTitle);
+
+        if (icon != null) icon.setImageResource(iconRes);
+        if (label != null) label.setText(stageLabel);
+        if (stepTitle != null) stepTitle.setText(title);
     }
 
     private void updateTimelineUI(String currentStatus) {
@@ -201,17 +195,10 @@ public class HomeActivity extends AppCompatActivity {
     private void highlightStep(View view, boolean isFinal) {
         if (view == null) return;
         int color = isFinal ? Color.parseColor("#2E7D32") : Color.parseColor("#1A73E8");
-
         View dot = view.findViewById(R.id.stepDot);
-        if (dot != null && dot.getBackground() != null) {
-            dot.getBackground().setTint(color);
-        }
-
+        if (dot != null && dot.getBackground() != null) dot.getBackground().setTint(color);
         View line = view.findViewById(R.id.timelineLine);
         if (line != null) line.setBackgroundColor(color);
-
-        ((TextView) view.findViewById(R.id.tvStepTitle)).setTextColor(color);
-        view.findViewById(R.id.stepIcon).setAlpha(1.0f);
     }
 
     private void resetAllSteps() {
@@ -219,25 +206,20 @@ public class HomeActivity extends AppCompatActivity {
         View[] steps = {step1, step2, step3, step4, step5};
         for (View s : steps) {
             if (s == null) continue;
-            ((TextView) s.findViewById(R.id.tvStepTitle)).setTextColor(Color.GRAY);
-            s.findViewById(R.id.timelineLine).setBackgroundColor(grey);
-
             View dot = s.findViewById(R.id.stepDot);
-            if (dot != null && dot.getBackground() != null) {
-                dot.getBackground().setTint(grey);
-            }
-            s.findViewById(R.id.stepIcon).setAlpha(0.4f);
+            if (dot != null && dot.getBackground() != null) dot.getBackground().setTint(grey);
+            View line = s.findViewById(R.id.timelineLine);
+            if (line != null) line.setBackgroundColor(grey);
         }
     }
 
-    private void handleReadyState() {
+    private void handleReadyState(DataSnapshot data) {
         if (tvSecurityCode == null) return;
-        mDatabase.child("pickupCode").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().getValue() != null) {
-                tvSecurityCode.setText("Claim Code: " + task.getResult().getValue().toString());
-                tvSecurityCode.setVisibility(View.VISIBLE);
-            }
-        });
+        String code = data.child("pickupCode").getValue(String.class);
+        if (code != null) {
+            tvSecurityCode.setText("Claim Code: " + code);
+            tvSecurityCode.setVisibility(View.VISIBLE);
+        }
     }
 
     private void goToLogin() {

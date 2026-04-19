@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.la_buddy"
-    compileSdk = 34 // Simplified this to fix the line 8 error
+    compileSdk = 36 // Simplified this to fix the line 8 error
 
     defaultConfig {
         applicationId = "com.example.la_buddy"
@@ -39,9 +39,12 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.activity:activity:1.8.2")
 
-    // Firebase (The Engine)
+    // Firebase
     implementation("com.google.firebase:firebase-auth:23.0.0")
     implementation("com.google.firebase:firebase-database:21.0.0")
+
+    // GOOGLE MAPS - Explicitly use this one
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
