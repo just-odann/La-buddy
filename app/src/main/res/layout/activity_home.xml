@@ -84,7 +84,7 @@
                     tools:ignore="VisualLintButtonSize" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardPriceList"
+                    android:id="@+id/cardServiceMenu"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"

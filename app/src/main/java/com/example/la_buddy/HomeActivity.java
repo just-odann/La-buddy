@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
     private FloatingActionButton fabContact;
 
     private View btnBookWash;
-    private CardView cardPriceList, cardStoreInfo;
+    private CardView cardStoreInfo;
 
     private View step1, step2, step3, step4, step5;
 
@@ -71,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btnLogout);
         fabContact = findViewById(R.id.fabContact);
         btnBookWash = findViewById(R.id.btnBookWash);
-        cardPriceList = findViewById(R.id.cardPriceList);
+        CardView cardServiceMenu = findViewById(R.id.cardServiceMenu);
         cardStoreInfo = findViewById(R.id.cardStoreInfo);
 
         // INITIAL STATE: Everything hidden until data is confirmed
