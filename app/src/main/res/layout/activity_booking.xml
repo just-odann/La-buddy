@@ -103,14 +103,22 @@
 
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/toggleMethod"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:singleSelection="true"
-                    app:selectionRequired="true"
                     app:checkedButton="@+id/btnModePickup">
-                    <Button android:id="@+id/btnModePickup" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="54dp" android:layout_weight="1" android:text="Pick-up" />
-                    <Button android:id="@+id/btnModeDropoff" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="54dp" android:layout_weight="1" android:text="Drop-off" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnModePickup"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pickup &amp; Delivery" /> <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnModeDropoff"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Walk-in" /> </com.google.android.material.button.MaterialButtonToggleGroup>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardMap"
@@ -121,8 +129,7 @@
                     app:cardElevation="2dp">
 
                     <fragment
-                        android:id="@+id/bookingMap"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:id="@+id/map"  android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         tools:layout="@android:layout/simple_gallery_item" />

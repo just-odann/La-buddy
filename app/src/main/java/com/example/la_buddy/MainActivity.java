@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        // This points to the very top of your Firebase URL
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final EditText emailField = findViewById(R.id.emailAddress);
@@ -36,56 +37,82 @@ public class MainActivity extends AppCompatActivity {
         // 1. SIGN UP ACTION
         if (btnSignUp != null) {
             btnSignUp.setOnClickListener(v -> {
+                // Disable button to prevent the "Email in use" double-click error
+                btnSignUp.setEnabled(false);
+                btnSignUp.setText("Connecting Buddy...");
+
                 String email = emailField.getText().toString().trim();
                 String password = passwordField.getText().toString().trim();
                 String phone = phoneField.getText().toString().trim();
 
                 if (email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
                     Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    btnSignUp.setEnabled(true);
+                    btnSignUp.setText("Sign Up");
                     return;
                 }
 
+                // Firebase Auth Call
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
-                                String uid = mAuth.getCurrentUser().getUid();
-                                saveUserToDatabase(uid, email, phone);
+                                // This is where we save to the "Users" folder
+                                saveUserToDatabase(mAuth.getCurrentUser().getUid(), email, phone);
                             } else {
-                                String error = (task.getException() != null) ? task.getException().getMessage() : "Registration Failed";
-                                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                                // If it actually fails, let them try again
+                                btnSignUp.setEnabled(true);
+                                btnSignUp.setText("Sign Up");
+                                Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
             });
         }
 
-        // 2. REDIRECT TO LOGIN (Fixed to prevent skipping to Home)
         if (tvLoginLink != null) {
             tvLoginLink.setOnClickListener(v -> {
-                // We use a simple intent here.
-                // DO NOT use CLEAR_TASK here, or it might trigger auto-login loops.
+                // FORCE SIGN OUT: This ensures LoginActivity won't
+                // automatically redirect back to HomeActivity.
+                FirebaseAuth.getInstance().signOut();
+
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
+
+                // Optional: Use finish() if you don't want the user
+                // to go back to the Sign Up screen using the back button.
                 finish();
             });
         }
-    } // <--- THIS BRACE WAS MISSING. It closes the onCreate method.
+    }
 
     private void saveUserToDatabase(String uid, String email, String phone) {
+        // 1. Prepare the Profile Data
         HashMap<String, Object> userMap = new HashMap<>();
+        userMap.put("uid", uid); // Unique ID from Gmail/Auth
         userMap.put("email", email);
         userMap.put("phone", phone);
-        userMap.put("status", "Received");
         userMap.put("name", email.split("@")[0]);
 
-        mDatabase.child("Orders").child(uid).setValue(userMap)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(MainActivity.this, "Account Registered!", Toast.LENGTH_SHORT).show();
+        // 2. ADD THE "MAP CONNECTION" FIELDS
+        // These act as placeholders so the Map knows where to save data later
+        userMap.put("latitude", 14.1167);  // Default to Daet/CNSC area coordinates
+        userMap.put("longitude", 122.9500);
+        userMap.put("address", "No address set yet");
 
-                    // 3. GO TO HOME (Only after successful registration)
+        // 3. THE DATABASE PATH
+        // Saving to "Users" keeps the Admin App clean, but prepares the Map data
+        mDatabase.child("Users").child(uid).setValue(userMap)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(MainActivity.this, "Gmail Profile Connected!", Toast.LENGTH_SHORT).show();
+
+                    // GO TO HOME
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(MainActivity.this, "Connection Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
+
 }

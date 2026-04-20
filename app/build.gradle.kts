@@ -43,8 +43,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.0.0")
     implementation("com.google.firebase:firebase-database:21.0.0")
 
-    // GOOGLE MAPS - Explicitly use this one
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    // GOOGLE MAPS (Latest Version)
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")

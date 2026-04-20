@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,8 +24,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. AUTO-LOGIN CHECK
-        // Check if the user is already logged in before even showing the login screen
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -34,14 +33,12 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        // 2. INITIALIZE VIEWS
         final EditText emailField = findViewById(R.id.loginEmail);
         final TextInputLayout passwordLayout = findViewById(R.id.passwordInputLayout);
         final TextInputEditText passwordEditText = findViewById(R.id.passwordEditText);
         AppCompatButton loginButton = findViewById(R.id.btnLogin);
         TextView signUpRedirect = findViewById(R.id.tvSignUpLink);
 
-        // Password Toggle UI Logic
         if (passwordLayout != null && passwordEditText != null) {
             passwordLayout.setEndIconVisible(false);
             passwordEditText.addTextChangedListener(new TextWatcher() {
@@ -54,14 +51,12 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-        // 3. NAVIGATION TO SIGN UP
         if (signUpRedirect != null) {
             signUpRedirect.setOnClickListener(v -> {
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
             });
         }
 
-        // 4. LOGIN LOGIC
         if (loginButton != null) {
             loginButton.setOnClickListener(v -> {
                 String email = emailField.getText().toString().trim();
@@ -76,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "Welcome back, Buddy!", Toast.LENGTH_SHORT).show();
-                                navigateToHome(); // Redirects to HomeActivity
+                                navigateToHome();
                             } else {
                                 String errorMessage = task.getException() != null ? task.getException().getMessage() : "Login Failed";
                                 Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
@@ -84,17 +79,20 @@ public class LoginActivity extends AppCompatActivity {
                         });
             });
         }
+
+        // GOOGLE SIGN-IN PLACEHOLDER
+        View btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
+        if (btnGoogleLogin != null) {
+            btnGoogleLogin.setOnClickListener(v -> {
+                Toast.makeText(LoginActivity.this, "Google Sign-In is currently in development!", Toast.LENGTH_LONG).show();
+            });
+        }
     }
 
-    // HELPER METHOD FOR CLEAN NAVIGATION
     private void navigateToHome() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-
-        // FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK
-        // This clears the "Back Stack" so the user can't press back to see the login screen again.
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         startActivity(intent);
-        finish(); // Destroys LoginActivity from memory
+        finish();
     }
 }
