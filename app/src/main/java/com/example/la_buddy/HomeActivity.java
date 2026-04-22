@@ -173,24 +173,57 @@ public class HomeActivity extends AppCompatActivity {
         // 1. CHAT BUTTON (The one you just asked about)
         if (fabContact != null) {
             fabContact.setOnClickListener(v -> {
-                // This creates a quick popup for the user to type
-                EditText messageInput = new EditText(this);
-                messageInput.setHint("e.g., Please use extra fabcon...");
+                // 1. Create the Bottom Sheet Dialog
+                com.google.android.material.bottomsheet.BottomSheetDialog chatSheet =
+                        new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+                View sheetView = getLayoutInflater().inflate(R.layout.layout_chat_sheet, null);
+                chatSheet.setContentView(sheetView);
 
-                new android.app.AlertDialog.Builder(this)
-                        .setTitle("Message to Admin")
-                        .setView(messageInput)
-                        .setPositiveButton("Send", (dialog, which) -> {
-                            String userMsg = messageInput.getText().toString().trim();
-                            if (!userMsg.isEmpty()) {
-                                // This sends the message to the EXACT same place
-                                // your Admin App is watching.
-                                mDatabase.child("userMessage").setValue(userMsg);
-                                Toast.makeText(this, "Message sent to Admin!", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
+                // 2. Bind the UI elements inside the sheet
+                androidx.recyclerview.widget.RecyclerView rvChat = sheetView.findViewById(R.id.rvChat);
+                EditText etMsg = sheetView.findViewById(R.id.etChatMessage);
+                android.widget.ImageButton btnSend = sheetView.findViewById(R.id.btnSendChat);
+
+                // 3. Setup the Adapter
+                java.util.List<ChatMessage> chatList = new java.util.ArrayList<>();
+                ChatAdapter chatAdapter = new ChatAdapter(chatList, currentUid);
+                rvChat.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+                rvChat.setAdapter(chatAdapter);
+
+                // 4. Fetch Messages from Firebase (Path: Orders/UID/messages)
+                DatabaseReference chatRef = mDatabase.child("messages");
+                chatRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        chatList.clear();
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            ChatMessage m = ds.getValue(ChatMessage.class);
+                            if (m != null) chatList.add(m);
+                        }
+                        chatAdapter.notifyDataSetChanged();
+                        if (chatList.size() > 0) rvChat.scrollToPosition(chatList.size() - 1);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+
+                // 5. Send Message Logic
+                // 5. Send Message Logic
+                btnSend.setOnClickListener(view -> {
+                    String text = etMsg.getText().toString().trim();
+                    if (!text.isEmpty()) {
+                        // 1. Add the bubble to the chat list
+                        ChatMessage newMessage = new ChatMessage(text, currentUid);
+                        chatRef.push().setValue(newMessage);
+
+                        // 2. ADD THIS LINE: Update the old field so the C# Admin Table can see it!
+                        mDatabase.child("userMessage").setValue(text);
+
+                        etMsg.setText(""); // Clear the typing box
+                    }
+                });
+
+                chatSheet.show();
             });
         }
 
