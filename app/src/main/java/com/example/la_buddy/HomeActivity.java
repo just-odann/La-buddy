@@ -25,6 +25,12 @@ import com.google.firebase.database.ValueEventListener;
 import android.view.View;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 public class HomeActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
@@ -32,13 +38,15 @@ public class HomeActivity extends AppCompatActivity {
 
     private TextView tvUserName, tvOrderId, tvWeight, tvPrice, tvSecurityCode;
     private View activeOrderCard, timelineContainer;
-    private ImageView btnLogout;
+    private ImageView btnLogout, imgProfilePicture;
     private FloatingActionButton fabContact;
     private View btnBookWash;
     private CardView cardStoreInfo, cardServiceMenu;
     private View step1, step2, step3, step4, step5, step6, step7, step8;
     private TextView tvAdminMessage;
     private Button btnConfirmReceipt;
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private String userName = "Customer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // 1. BIND VIEWS
         tvUserName = findViewById(R.id.userName);
+        imgProfilePicture = findViewById(R.id.imgProfilePicture);
         tvOrderId = findViewById(R.id.tvOrderId);
         tvWeight = findViewById(R.id.tvWeight);
         tvPrice = findViewById(R.id.tvPrice);
@@ -78,22 +87,81 @@ public class HomeActivity extends AppCompatActivity {
         step7 = findViewById(R.id.step7);
         step8 = findViewById(R.id.step8);
 
-        // 2. USER GREETING
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUid);
-        userRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().exists()) {
-                String realName = task.getResult().child("name").getValue(String.class);
-                if (tvUserName != null && realName != null) {
-                    tvUserName.setText("Good morning, " + realName + "!");
+        // 2. IMAGE PICKER SETUP
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri selectedImageUri = result.getData().getData();
+                        imgProfilePicture.setImageURI(selectedImageUri); // Instant preview
+                        uploadImageToFirebase(selectedImageUri);         // Upload to cloud
+                    }
                 }
+        );
+
+        // Make the profile picture clickable to open the gallery!
+        imgProfilePicture.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            imagePickerLauncher.launch(intent);
+        });
+
+        // 3. SMART GREETING & LIVE USER DATA (Combined & Fixed)
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        int timeOfDay = c.get(java.util.Calendar.HOUR_OF_DAY);
+        String greetingText = "Good Evening";
+
+        // Removed the 'always true' warning!
+        if (timeOfDay < 12) {
+            greetingText = "Good Morning";
+        } else if (timeOfDay < 17) {
+            greetingText = "Good Afternoon";
+        }
+        final String finalGreeting = greetingText;
+
+        // Declared exactly ONCE
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUid);
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    // --- A. Update Name with Time of Day ---
+                    String fullName = snapshot.child("name").getValue(String.class);
+                    if (tvUserName != null) {
+                        if (fullName != null && !fullName.isEmpty()) {
+                            String firstName = fullName.split(" ")[0]; // Get just the first name
+                            tvUserName.setText(finalGreeting + ",\n" + firstName + "! 👋");
+                        } else {
+                            tvUserName.setText(finalGreeting + ",\nUser! 👋");
+                        }
+                    }
+
+                    // --- B. Update Profile Picture using Glide ---
+                    String imageUrl = snapshot.child("profileImageUrl").getValue(String.class);
+                    // Added a check to make sure the Activity isn't closing before Glide tries to load
+                    if (imageUrl != null && !isDestroyed()) {
+                        Glide.with(HomeActivity.this)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_profile)
+                                .into(imgProfilePicture);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(HomeActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // 3. ATTACH BUTTON LISTENERS
+        // 4. ATTACH BUTTON LISTENERS
         setupButtonListeners();
 
 
-        // 4. FIREBASE LIVE LISTENER
+        // 5. FIREBASE LIVE LISTENER
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Orders").child(currentUid);
         hideBookingUI();
         setupStepStaticContent();
@@ -103,54 +171,99 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+
+                    // --- A. PULL DATA FOR THE TIMELINE ---
                     String status = snapshot.child("status").getValue(String.class);
-                    String serviceType = snapshot.child("serviceType").getValue(String.class);
 
-                    if (status != null && !status.equalsIgnoreCase("None")) {
+                    // These are the "Original" variables
+                    String method = snapshot.hasChild("method") ?
+                            snapshot.child("method").getValue(String.class) :
+                            snapshot.child("serviceType").getValue(String.class);
+
+                    String category = snapshot.hasChild("category") ?
+                            snapshot.child("category").getValue(String.class) :
+                            snapshot.child("laundryType").getValue(String.class);
+
+                    if (status != null && !status.equalsIgnoreCase("None") && !status.equalsIgnoreCase("Completed")) {
                         showBookingUI();
-                        updateTimelineUI(status, serviceType != null ? serviceType : "Pickup");
+                        updateTimelineUI(status, method != null ? method : "Walk-in");
 
-                        // --- 1. THE "ORDER COMPLETE" BUTTON LOGIC ---
-                        // Show the button ONLY if the laundry is actually with them or ready
                         if (btnConfirmReceipt != null) {
-                            if ("Ready".equalsIgnoreCase(status) ||
-                                    "Delivered".equalsIgnoreCase(status) ||
-                                    "Picked Up".equalsIgnoreCase(status)) {
+                            boolean shouldShow = false;
 
+                            if (method != null && method.contains("Delivery")) {
+                                if ("Delivered".equalsIgnoreCase(status)) shouldShow = true;
+                            } else {
+                                if ("Ready".equalsIgnoreCase(status) || "Picked Up".equalsIgnoreCase(status)) shouldShow = true;
+                            }
+
+                            if (shouldShow) {
                                 btnConfirmReceipt.setVisibility(View.VISIBLE);
 
                                 btnConfirmReceipt.setOnClickListener(v -> {
-                                    snapshot.getRef().child("status").setValue("Completed");
-                                    snapshot.getRef().child("adminMessage").setValue("Order Finished. Thank you!");
+                                    btnConfirmReceipt.setVisibility(View.GONE);
 
-                                    // Use HomeActivity.this instead of getContext()
-                                    Toast.makeText(HomeActivity.this, "Transaction Completed!", Toast.LENGTH_SHORT).show();
+                                    // 1. THE DATA CATCHER (Looks for plural AND singular keys)
+                                    DataSnapshot s = snapshot;
+
+                                    // Check 'items' first, then 'item' as backup
+                                    String histItems = "Standard";
+                                    if (s.hasChild("items")) histItems = String.valueOf(s.child("items").getValue());
+                                    else if (s.hasChild("item")) histItems = String.valueOf(s.child("item").getValue());
+
+                                    // Check 'category' first, then 'laundryType' as backup
+                                    String histCategory = "Standard";
+                                    if (s.hasChild("category")) histCategory = String.valueOf(s.child("category").getValue());
+                                    else if (s.hasChild("laundryType")) histCategory = String.valueOf(s.child("laundryType").getValue());
+
+                                    // Check 'method' first, then 'serviceType' as backup
+                                    String histMethod = "Walk-in";
+                                    if (s.hasChild("method")) histMethod = String.valueOf(s.child("method").getValue());
+                                    else if (s.hasChild("serviceType")) histMethod = String.valueOf(s.child("serviceType").getValue());
+
+                                    // 2. MAPPING FOR HISTORY (These keys MUST match OrderHistoryActivity)
+                                    java.util.HashMap<String, Object> historyMap = new java.util.HashMap<>();
+                                    historyMap.put("date", new java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault()).format(new java.util.Date()));
+                                    historyMap.put("category", histCategory);
+                                    historyMap.put("items", histItems); // This is what the History Activity looks for
+                                    historyMap.put("method", histMethod);
+                                    historyMap.put("addons", (s.child("detergent").getValue() != null ? s.child("detergent").getValue() : "None") + " | " +
+                                            (s.child("fabcon").getValue() != null ? s.child("fabcon").getValue() : "None"));
+                                    historyMap.put("weight", s.hasChild("weight") ? String.valueOf(s.child("weight").getValue()) : "Pending");
+                                    historyMap.put("price", "₱" + String.valueOf(s.child("price").getValue()).replace("₱", ""));
+                                    historyMap.put("status", "Picked Up");
+                                    historyMap.put("name", s.hasChild("name") ? String.valueOf(s.child("name").getValue()) : "User");
+
+                                    // 3. SAVE AND PURGE
+                                    DatabaseReference histRef = FirebaseDatabase.getInstance().getReference("OrderHistory").child(currentUid);
+                                    String historyId = s.child("historyId").getValue(String.class);
+                                    DatabaseReference finalHistRef = (historyId != null) ? histRef.child(historyId) : histRef.push();
+
+                                    // --- CHANGE THIS SECTION ---
+                                    finalHistRef.setValue(historyMap).addOnCompleteListener(task -> {
+                                        // Instead of deleting (removeValue), we just update the status to "Completed"
+                                        java.util.HashMap<String, Object> updateStatus = new java.util.HashMap<>();
+                                        updateStatus.put("status", "Completed"); // This tells the Admin it's done
+
+                                        s.getRef().updateChildren(updateStatus).addOnSuccessListener(aVoid -> {
+                                            resetAllSteps();
+                                            // We keep the UI visible or hidden based on your preference
+                                            hideBookingUI();
+                                            Toast.makeText(HomeActivity.this, "Order Finalized!", Toast.LENGTH_SHORT).show();
+                                        });
+                                    });
                                 });
                             } else {
                                 btnConfirmReceipt.setVisibility(View.GONE);
                             }
                         }
-                        // --- FETCH THE ADMIN MESSAGE ---
-                        String adminMsg = snapshot.child("adminMessage").getValue(String.class);
-                        if (tvAdminMessage != null) {
-                            if (adminMsg != null && !adminMsg.isEmpty()) {
-                                tvAdminMessage.setText("Admin Note: " + adminMsg);
-                                tvAdminMessage.setVisibility(View.VISIBLE);
-                            } else {
-                                tvAdminMessage.setVisibility(View.GONE);
-                            }
-                        }
 
-                        // --- YOUR EXISTING PRICE & WEIGHT LOGIC ---
+                        // --- C. PRICE & WEIGHT DISPLAY ---
                         Object weightObj = snapshot.child("weight").getValue();
                         Object priceObj = snapshot.child("price").getValue();
 
-                        String weight = (weightObj != null) ? String.valueOf(weightObj) : "0";
-                        String price = (priceObj != null) ? String.valueOf(priceObj) : "0";
-
-                        if (tvWeight != null) tvWeight.setText("Weight: " + weight + " kg");
-                        if (tvPrice != null) tvPrice.setText("₱" + price);
-                        if (tvOrderId != null) tvOrderId.setText("Order Tracking Active");
+                        if (tvWeight != null) tvWeight.setText("Weight: " + (weightObj != null ? weightObj : "0"));
+                        if (tvPrice != null) tvPrice.setText("₱" + (priceObj != null ? priceObj : "0"));
 
                         if ("Ready".equalsIgnoreCase(status)) {
                             handleReadyState(snapshot);
@@ -164,12 +277,22 @@ public class HomeActivity extends AppCompatActivity {
                     hideBookingUI();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
     private void setupButtonListeners() {
+        if (imgProfilePicture != null) {
+            imgProfilePicture.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                imagePickerLauncher.launch(intent);
+            });
+        }
+
+
         // 1. CHAT BUTTON (The one you just asked about)
         if (fabContact != null) {
             fabContact.setOnClickListener(v -> {
@@ -257,8 +380,28 @@ public class HomeActivity extends AppCompatActivity {
 
         // Navigation Bar
         findViewById(R.id.navHome).setOnClickListener(v -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show());
-        findViewById(R.id.navHistory).setOnClickListener(v -> Toast.makeText(this, "History Coming Soon", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.navHistory).setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, OrderHistoryActivity.class));
+        });
         findViewById(R.id.navSettings).setOnClickListener(v -> Toast.makeText(this, "Settings Coming Soon", Toast.LENGTH_SHORT).show());
+    }
+
+    private void uploadImageToFirebase(Uri uri) {
+        if (uri == null) return;
+
+        StorageReference fileRef = FirebaseStorage.getInstance().getReference("ProfilePics")
+                .child(currentUid + ".jpg");
+
+        fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+            fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(currentUid)
+                        .child("profileImageUrl")
+                        .setValue(downloadUri.toString());
+
+                Toast.makeText(this, "Profile Picture Updated!", Toast.LENGTH_SHORT).show();
+            });
+        }).addOnFailureListener(e -> Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void showBookingUI() {

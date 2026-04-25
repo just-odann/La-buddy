@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.Labuddy" parent="Base.Theme.Labuddy" />
+
+    <style name="CircleShape">
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

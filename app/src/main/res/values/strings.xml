@@ -58,28 +58,28 @@
     <string name="text_loc">Daet, Camarines Norte</string>
     <string name="desc_loc">Store Location Map</string>
     <string name="desc_loc_pin">Location Pin</string>
+    <string name="text_subtitle_laundry">Ready for fresh laundry?</string>
+
+    <string-array name="service_categories">
+        <item>Choose a category...</item>
+        <item>Regular Services</item>
+        <item>Baro\'t Saya &amp; Barong</item>
+        <item>Polos &amp; Suits</item>
+    </string-array>
+
+    <string-array name="regular_items">
+        <item>Clothes / Everyday Wear - ₱90.00</item>
+        <item>Blanket / Bed Sheets - ₱100.00</item>
+        <item>Curtains - ₱125.00</item>
+        <item>Denim / Jeans - ₱85.00</item>
+    </string-array>
 
 
-        <string-array name="service_categories">
-            <item>Choose a category...</item>
-            <item>Regular Services</item>
-            <item>Baro\'t Saya &amp; Barong</item>
-            <item>Polos &amp; Suits</item>
-        </string-array>
-
-        <string-array name="regular_items">
-            <item>Clothes / Everyday Wear - ₱90.00</item>
-            <item>Blanket / Bed Sheets - ₱100.00</item>
-            <item>Curtains - ₱125.00</item>
-            <item>Denim / Jeans - ₱85.00</item>
-        </string-array>
-
-
-        <string-array name="specialty_items">
-            <item>Baro\'t Saya (Dress) - ₱605.00</item>
-            <item>Barong (Long Sleeves) - ₱355.00</item>
-            <item>Barong (Short Sleeves) - ₱305.00</item>
-        </string-array>
+    <string-array name="specialty_items">
+        <item>Baro\'t Saya (Dress) - ₱605.00</item>
+        <item>Barong (Long Sleeves) - ₱355.00</item>
+        <item>Barong (Short Sleeves) - ₱305.00</item>
+    </string-array>
 
     <string-array name="polo_items">
         <item>Suit (Top) - ₱305.00</item>
@@ -87,16 +87,19 @@
         <item>Polo (Long Sleeve) - ₱155.00</item>
     </string-array>
 
-        <string-array name="detergent_options">
-            <item>Standard Liquid Detergent (FREE)</item>
-            <item>Ariel / Tide / Pride (+₱15.00)</item>
-        </string-array>
+    <string-array name="detergent_options">
+        <item>Standard Liquid Detergent (FREE)</item>
+        <item>Ariel / Tide / Pride (+₱15.00)</item>
+    </string-array>
 
-        <string-array name="fabcon_options">
-            <item>None</item>
-            <item>Downy (Garden/Sunrise) (+₱20.00)</item>
-            <item>Surf FabCon (+₱12.00)</item>
-        </string-array>
+    <string-array name="fabcon_options">
+        <item>None</item>
+        <item>Downy (Garden/Sunrise) (+₱20.00)</item>
+        <item>Surf FabCon (+₱12.00)</item>
+    </string-array>
 
+    <string name="text_waiting_admin">Waiting for admin message...</string>
+    <string name="btn_confirm_received">CONFIRM RECEIVED</string>
+    <string name="desc_message_icon">Message Icon</string>
 
 </resources>

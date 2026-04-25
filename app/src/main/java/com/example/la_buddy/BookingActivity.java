@@ -36,6 +36,9 @@ public class BookingActivity extends AppCompatActivity implements OnMapReadyCall
     private double selectedLat = 14.1167; // Default: Daet
     private double selectedLng = 122.9500;
 
+    private TextView tvSelectedRate;
+    private TextView tvTotal;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,42 +64,71 @@ public class BookingActivity extends AppCompatActivity implements OnMapReadyCall
         cardMap = findViewById(R.id.cardMap);
         toggleMethod = findViewById(R.id.toggleMethod);
 
-        // Category Logic
+        // --- 1. THE CATEGORY SPINNER (Fills the second box) ---
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ArrayAdapter<CharSequence> adapter;
+                ArrayAdapter<CharSequence> adapter = null;
+
+                // Based on your previous code: position 0 is likely "Select Category"
                 switch (position) {
                     case 1:
                         adapter = ArrayAdapter.createFromResource(BookingActivity.this, R.array.regular_items, android.R.layout.simple_spinner_item);
-                        spinnerItems.setAdapter(adapter);
                         break;
                     case 2:
                         adapter = ArrayAdapter.createFromResource(BookingActivity.this, R.array.specialty_items, android.R.layout.simple_spinner_item);
-                        spinnerItems.setAdapter(adapter);
                         break;
                     case 3:
                         adapter = ArrayAdapter.createFromResource(BookingActivity.this, R.array.polo_items, android.R.layout.simple_spinner_item);
-                        spinnerItems.setAdapter(adapter);
-                        break;
-                    default:
-                        spinnerItems.setAdapter(null);
                         break;
                 }
+
+                // Apply the adapter to the second box
+                if (adapter != null) {
+                    // CRITICAL FIX: This line makes sure the dropdown actually looks like a dropdown menu!
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerItems.setAdapter(adapter);
+                } else {
+                    spinnerItems.setAdapter(null); // Clear it out if they haven't picked a category
+                }
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
 
+// --- 2. THE SPECIFIC ITEM SPINNER (Calculates the Rate & Shows Logistics) ---
         spinnerItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // 1. Show the Logistics Layout
                 if (position >= 0 && spinnerItems.getAdapter() != null) {
                     layoutLogistics.setVisibility(View.VISIBLE);
                     layoutLogistics.setAlpha(0f);
                     layoutLogistics.animate().alpha(1f).setDuration(500);
                 }
+
+                // 2. Extract the price for the UI
+                String selectedService = parent.getItemAtPosition(position).toString();
+                String extractedRate = "0.00";
+
+                // Only try to grab a price if the string actually has the Peso sign
+                if (selectedService.contains("₱")) {
+                    extractedRate = selectedService.substring(selectedService.indexOf("₱") + 1).trim();
+                }
+
+                // 3. Update the UI TextBoxes
+                if (tvSelectedRate != null) {
+                    tvSelectedRate.setText("Rate: ₱" + extractedRate + " / kg");
+                }
+                if (tvTotal != null) {
+                    tvTotal.setText("Total: Pending Admin Weigh-in");
+                }
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
 
         toggleMethod.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -139,22 +171,22 @@ public class BookingActivity extends AppCompatActivity implements OnMapReadyCall
 
         // --- STEP 1: THE RESTRICTION CHECK ---
         // Look into the "Orders" node for this specific User ID
+        // --- STEP 1: THE RESTRICTION CHECK ---
         mDatabase.child("Orders").child(uid).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().exists()) {
-                // An order node exists. Now check if the status is actually "ongoing"
                 String currentStatus = task.getResult().child("status").getValue(String.class);
 
-                // If status is NOT null and NOT "Completed", block the new order
+                // This line is the KEY:
+                // It only blocks the user IF the status is NOT "Completed" and NOT "Picked Up"
                 if (currentStatus != null && !currentStatus.equalsIgnoreCase("Completed")
                         && !currentStatus.equalsIgnoreCase("Picked Up")) {
 
                     Toast.makeText(this, "You still have an ongoing order! Please wait for it to be completed.", Toast.LENGTH_LONG).show();
-                    return; // STOP the method here
+                    return; // Stops them from booking
                 }
             }
 
-            // --- STEP 2: PROCEED WITH BOOKING ---
-            // If the code reaches here, it means no active order was found
+            // If the status IS "Completed", it skips the IF block and runs this:
             processFinalBooking(uid);
         });
     }
@@ -162,7 +194,7 @@ public class BookingActivity extends AppCompatActivity implements OnMapReadyCall
     private void processFinalBooking(String uid) {
         mDatabase.child("Users").child(uid).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().exists()) {
-                // 1. Declare the variables inside this block so they are "visible"
+                // 1. Declare the variables inside this block
                 String realName = task.getResult().child("name").getValue(String.class);
                 String realPhone = task.getResult().child("phone").getValue(String.class);
 
@@ -176,38 +208,117 @@ public class BookingActivity extends AppCompatActivity implements OnMapReadyCall
                 String serviceType = (toggleMethod.getCheckedButtonId() == R.id.btnModePickup)
                         ? "Pickup & Delivery"
                         : "Walk-in";
-
                 // 4. Calculate Total
-                int basePrice = 100; // Default base price
-                int deliveryFee = 0;
-                if (serviceType.equals("Pickup & Delivery")) {
-                    deliveryFee = 50; // The automatic 50 pesos fee
+                double basePrice = 0;
+
+                // --- A. ITEM BASE PRICE ---
+                // (Adjust these names to match EXACTLY what is in your strings.xml arrays)
+                if (item.contains("Baro't Saya") || item.contains("Polo")) {
+                    basePrice = 150.0;
+                } else if (category.equalsIgnoreCase("Regular")) {
+                    basePrice = 100.0; // Standard price for regular items
+                } else if (category.equalsIgnoreCase("Specialty")) {
+                    basePrice = 180.0; // Standard price for specialty items
+                } else {
+                    basePrice = 100.0; // Fallback price
                 }
-                int totalAmount = basePrice + deliveryFee;
 
-                // 5. Create the HashMap and put EVERYTHING inside
-                HashMap<String, Object> order = new HashMap<>();
-                order.put("name", realName);
-                order.put("phone", realPhone);
-                order.put("category", category);
-                order.put("item", item);
-                order.put("detergent", detergent); // Fixes "never accessed" warning
-                order.put("fabcon", fabcon);       // Fixes "never accessed" warning
-                order.put("isStudent", switchStudent.isChecked()); // Fixes "never accessed" warning
-                order.put("serviceType", serviceType);
-                order.put("price", String.valueOf(totalAmount));
-                order.put("status", "Received");
-                order.put("latitude", selectedLat);
-                order.put("longitude", selectedLng);
-                order.put("timestamp", System.currentTimeMillis());
+                // --- B. ADD-ONS (DETERGENT & FABCON) ---
+                double addonsPrice = 0;
+                // If they picked something other than "None" or standard, charge them
+                if (!detergent.equalsIgnoreCase("None") && !detergent.equalsIgnoreCase("Standard")) {
+                    addonsPrice += 15.0; // e.g., ₱15 for premium detergent
+                }
+                if (!fabcon.equalsIgnoreCase("None") && !fabcon.equalsIgnoreCase("Standard")) {
+                    addonsPrice += 15.0; // e.g., ₱15 for premium fabcon
+                }
 
-                // 6. Save to Firebase
-                mDatabase.child("Orders").child(uid).setValue(order)
-                        .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this, "Total: ₱" + totalAmount + " (Fee included)", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(BookingActivity.this, HomeActivity.class));
-                            finish();
-                        });
+                double subTotal = basePrice + addonsPrice;
+
+                // --- C. STUDENT SAVER DISCOUNT ---
+                if (switchStudent.isChecked()) {
+                    // Applies a 10% discount to the laundry and add-ons
+                    subTotal = subTotal - (subTotal * 0.10);
+                }
+
+                // --- D. LOGISTICS FEE ---
+                double deliveryFee = 0;
+                if (serviceType.equals("Pickup & Delivery")) {
+                    deliveryFee = 50.0; // Flat 50 pesos fee
+                }
+
+                // --- E. FINAL TOTAL ---
+                // Combine it all and round to the nearest whole number
+                int totalAmount = (int) Math.round(subTotal + deliveryFee);
+
+                // --- F. GET DATE FOR HISTORY ---
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault());
+                String currentDate = sdf.format(new java.util.Date());
+
+                // ------------------------------------------------------------------
+                // DUAL-SAVE ARCHITECTURE (Preserves Chat & Creates Permanent Record)
+                // ------------------------------------------------------------------
+
+                // A. THE LIVE QUEUE UPDATE
+                HashMap<String, Object> liveOrder = new HashMap<>();
+                liveOrder.put("name", realName);
+                liveOrder.put("phone", realPhone);
+                liveOrder.put("category", category);
+                liveOrder.put("items", item);
+                liveOrder.put("detergent", detergent);
+                liveOrder.put("fabcon", fabcon);
+                liveOrder.put("isStudent", switchStudent.isChecked());
+                liveOrder.put("serviceType", serviceType);
+
+                // THE FIX: Set price and weight to Pending
+                liveOrder.put("price", "Pending");
+                liveOrder.put("weight", "Pending Drop-off");
+
+                liveOrder.put("status", "Dropped Off");
+                liveOrder.put("latitude", selectedLat);
+                liveOrder.put("longitude", selectedLng);
+                liveOrder.put("timestamp", System.currentTimeMillis());
+
+                mDatabase.child("Orders").child(uid).updateChildren(liveOrder);
+
+                // --- B. THE PERMANENT ORDER HISTORY ---
+                DatabaseReference historyRef = mDatabase.child("OrderHistory").child(uid);
+                String uniqueOrderId = historyRef.push().getKey();
+
+                if (uniqueOrderId != null) {
+                    // Tell the Live Order about this receipt ID
+                    mDatabase.child("Orders").child(uid).child("historyId").setValue(uniqueOrderId);
+
+                    HashMap<String, Object> historyData = new HashMap<>();
+                    historyData.put("orderId", uniqueOrderId);
+                    historyData.put("date", currentDate);
+                    historyData.put("status", "Dropped Off");
+                    historyData.put("name", realName);
+
+                    // --- CRITICAL KEY SYNCING ---
+                    // 1. Fixed Category (Was missing!)
+                    historyData.put("category", category);
+
+                    // 2. Fixed Items (Added the 's' to match your Activity)
+                    historyData.put("items", item);
+
+                    // 3. Fixed Method (Changed from serviceType to method)
+                    historyData.put("method", serviceType);
+
+                    // 4. Fixed Add-ons (Combined them into one string like your History Activity expects)
+                    String combinedAddons = (detergent != null ? detergent : "Standard") + " | " + (fabcon != null ? fabcon : "None");
+                    historyData.put("addons", combinedAddons);
+
+                    // 5. Fixed Price and Weight
+                    historyData.put("price", "Pending");
+                    historyData.put("weight", "Pending Drop-off");
+
+                    historyRef.child(uniqueOrderId).setValue(historyData).addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Order Placed! Final price will be calculated at drop-off.", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(BookingActivity.this, HomeActivity.class));
+                        finish();
+                    });
+                }
             }
         });
     }
