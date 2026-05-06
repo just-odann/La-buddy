@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Labuddy">
+
         <activity
             android:name=".OrderHistoryActivity"
             android:exported="false" />
@@ -32,10 +33,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -44,7 +45,26 @@
             android:exported="false" />
         <activity
             android:name=".HomeActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminMessagesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminFinanceActivity"
+            android:exported="false" />
+
+        <!-- 🚨 HERE IS THE FIX: Registering the Chat Activity! 🚨 -->
+        <activity
+            android:name=".AdminChatActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

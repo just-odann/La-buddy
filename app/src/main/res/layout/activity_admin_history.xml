@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/historyHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Order History"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="#1A73E8"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"/>
+
+    <!-- Search Bar (Fixed Touch Target & Styling) -->
+    <EditText
+        android:id="@+id/etSearchHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/historyHeader"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_bottom_sheet"
+        android:backgroundTint="#FFFFFF"
+        android:hint="Search customer or service..."
+        android:padding="12dp"
+        android:minHeight="48dp"
+        android:textSize="14sp"
+        android:inputType="text"
+        android:importantForAutofill="no" />
+
+    <!-- Date Filter Chips (Updated to Material 3 Styles) -->
+    <HorizontalScrollView
+        android:id="@+id/chipScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etSearchHistory"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFilters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipToday"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipThisWeek"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This Week" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipThisMonth"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This Month" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Time"
+                android:checked="true" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- History List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/chipScroll"
+        android:layout_above="@id/bottomNavigation"
+        android:padding="8dp" />
+
+    <!-- Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF"
+        app:menu="@menu/admin_bottom_nav"
+        app:itemIconTint="#1A73E8"
+        app:itemTextColor="#1A73E8"
+        app:labelVisibilityMode="labeled" />
+
+</RelativeLayout>

@@ -15,6 +15,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+// NEW IMPORTS FOR THE TRAFFIC COP
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,8 +29,10 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        // 1. If already logged in, check role instead of just going to Home
         if (currentUser != null) {
-            navigateToHome();
+            checkUserRole();
             return;
         }
 
@@ -71,7 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "Welcome back, Buddy!", Toast.LENGTH_SHORT).show();
-                                navigateToHome();
+                                // 2. Check role upon successful login
+                                checkUserRole();
                             } else {
                                 String errorMessage = task.getException() != null ? task.getException().getMessage() : "Login Failed";
                                 Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
@@ -89,10 +95,42 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void navigateToHome() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+    // --- PHASE 2: THE TRAFFIC COP METHOD ---
+    private void checkUserRole() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        String uid = user.getUid();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(uid);
+
+        // Look into the Users table to find this specific person's profile
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+
+                // Grab the role (it might be null if they are a regular user)
+                String role = task.getResult().child("role").getValue(String.class);
+
+                Intent intent;
+                // If they have the admin badge, send them to the Dashboard
+                if (role != null && role.equalsIgnoreCase("admin")) {
+                    intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+                } else {
+                    // Otherwise, send them to the regular Customer view
+                    intent = new Intent(LoginActivity.this, HomeActivity.class);
+                }
+
+                // Clear the backstack so they can't hit "Back" and go to the login screen
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+
+            } else {
+                // FALLBACK: If there's an internet error or their node is missing, default to regular Customer
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

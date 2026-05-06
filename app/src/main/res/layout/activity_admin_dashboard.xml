@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <!-- Top Header -->
+    <TextView
+        android:id="@+id/adminHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Admin Dashboard"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="#1A73E8"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"/>
+
+    <!-- NEW: The Active Orders Label -->
+    <TextView
+        android:id="@+id/tvActiveOrdersLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Active Orders"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:layout_below="@id/adminHeader"/>
+
+    <!-- The Order List (Notice it is now layout_below the new label!) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/adminRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvActiveOrdersLabel"
+        android:layout_above="@id/bottomNavigation"
+        android:padding="8dp"
+        android:clipToPadding="false"/>
+
+    <!-- The Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF"
+        app:menu="@menu/admin_bottom_nav"
+        app:itemIconTint="#1A73E8"
+        app:itemTextColor="#1A73E8"
+        app:labelVisibilityMode="labeled" />
+
+</RelativeLayout>

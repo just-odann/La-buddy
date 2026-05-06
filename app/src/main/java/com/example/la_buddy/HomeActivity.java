@@ -293,7 +293,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
-        // 1. CHAT BUTTON (The one you just asked about)
+        // 1. CHAT BUTTON
         if (fabContact != null) {
             fabContact.setOnClickListener(v -> {
                 // 1. Create the Bottom Sheet Dialog
@@ -302,18 +302,39 @@ public class HomeActivity extends AppCompatActivity {
                 View sheetView = getLayoutInflater().inflate(R.layout.layout_chat_sheet, null);
                 chatSheet.setContentView(sheetView);
 
-                // 2. Bind the UI elements inside the sheet
+                // 🚨 THE STUBBORN KEYBOARD FIX 🚨
+                // We tell the internal frame of the BottomSheet to stay expanded and resize.
+                chatSheet.setOnShowListener(dialog -> {
+                    com.google.android.material.bottomsheet.BottomSheetDialog d = (com.google.android.material.bottomsheet.BottomSheetDialog) dialog;
+                    android.widget.FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+                    if (bottomSheet != null) {
+                        // Force it to be fully expanded so the keyboard doesn't cover it
+                        com.google.android.material.bottomsheet.BottomSheetBehavior.from(bottomSheet)
+                                .setState(com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED);
+
+                        // Prevent it from sliding back down while you are typing
+                        com.google.android.material.bottomsheet.BottomSheetBehavior.from(bottomSheet)
+                                .setSkipCollapsed(true);
+                    }
+                });
+
+                // Set the soft input mode on the dialog's window
+                if (chatSheet.getWindow() != null) {
+                    chatSheet.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                }
+
+                // 2. Bind UI Elements
                 androidx.recyclerview.widget.RecyclerView rvChat = sheetView.findViewById(R.id.rvChat);
                 EditText etMsg = sheetView.findViewById(R.id.etChatMessage);
                 android.widget.ImageButton btnSend = sheetView.findViewById(R.id.btnSendChat);
 
-                // 3. Setup the Adapter
+                // 3. Setup Adapter (Synced with "customer" for alignment)
                 java.util.List<ChatMessage> chatList = new java.util.ArrayList<>();
-                ChatAdapter chatAdapter = new ChatAdapter(chatList, currentUid);
+                ChatAdapter chatAdapter = new ChatAdapter(chatList, "customer");
                 rvChat.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
                 rvChat.setAdapter(chatAdapter);
 
-                // 4. Fetch Messages from Firebase (Path: Orders/UID/messages)
+                // 4. Firebase Listener
                 DatabaseReference chatRef = mDatabase.child("messages");
                 chatRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -330,19 +351,29 @@ public class HomeActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
 
-                // 5. Send Message Logic
-                // 5. Send Message Logic
+                // Inside HomeActivity.java (Customer App)
                 btnSend.setOnClickListener(view -> {
                     String text = etMsg.getText().toString().trim();
                     if (!text.isEmpty()) {
-                        // 1. Add the bubble to the chat list
-                        ChatMessage newMessage = new ChatMessage(text, currentUid);
+                        long currentTime = System.currentTimeMillis(); // 🚨 Get the exact time
+
+                        ChatMessage newMessage = new ChatMessage(text, "customer", currentTime);
+
+                        // 1. Save to the conversation (This is for the Chat screen)
                         chatRef.push().setValue(newMessage);
 
-                        // 2. ADD THIS LINE: Update the old field so the C# Admin Table can see it!
-                        mDatabase.child("userMessage").setValue(text);
+                        // 2. Update the Users node (This is for the Admin's Inbox)
+                        DatabaseReference userUpdateRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUid);
+                        java.util.HashMap<String, Object> update = new java.util.HashMap<>();
+                        update.put("lastMessage", text);
+                        update.put("hasUnread", true);
 
-                        etMsg.setText(""); // Clear the typing box
+                        // 🚨 THE MISSING LINK: Send the timestamp so Admin can sort it! 🚨
+                        update.put("lastMessageTimestamp", currentTime);
+
+                        userUpdateRef.updateChildren(update);
+
+                        etMsg.setText("");
                     }
                 });
 

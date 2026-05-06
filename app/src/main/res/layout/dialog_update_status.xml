@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/tvDialogCustomerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Order"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 1. WEIGHT & PRICE SECTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Weight &amp; Pricing"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etUpdateWeight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Weight (kg)"
+                android:inputType="numberDecimal"
+                android:importantForAutofill="no"/>
+
+            <Button
+                android:id="@+id/btnCalculatePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calculate"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#2E7D32"/> <!-- Green like C# -->
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvCalculatedTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total: ₱0.00"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 2. QUICK REPLY SECTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quick Reply to Customer"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp">
+
+            <EditText
+                android:id="@+id/etQuickReply"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Type reply here..."
+                android:inputType="textMultiLine"
+                android:maxLines="3"
+                android:importantForAutofill="no"/>
+
+            <Button
+                android:id="@+id/btnSendReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#1A73E8"/> <!-- Blue like C# -->
+        </LinearLayout>
+
+        <!-- 3. STATUS BUTTONS SECTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Order Status"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp"/>
+
+        <Button android:id="@+id/btnSetDroppedOff" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Set: Dropped Off" android:backgroundTint="#1A73E8" android:layout_marginBottom="4dp"/>
+        <Button android:id="@+id/btnSetWashing" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Set: Washing" android:backgroundTint="#1A73E8" android:layout_marginBottom="4dp"/>
+        <Button android:id="@+id/btnSetDrying" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Set: Drying" android:backgroundTint="#1A73E8" android:layout_marginBottom="4dp"/>
+        <Button android:id="@+id/btnSetFolding" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Set: Folding" android:backgroundTint="#1A73E8" android:layout_marginBottom="4dp"/>
+        <Button android:id="@+id/btnSetReady" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Set: Ready" android:backgroundTint="#4CAF50" android:layout_marginBottom="4dp"/>
+        <Button android:id="@+id/btnSetCompleted" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Set: Completed / Picked Up" android:backgroundTint="#607D8B" />
+
+    </LinearLayout>
+</ScrollView>

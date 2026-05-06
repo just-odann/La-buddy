@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/financeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Financial Reports"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="#2E7D32"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"/>
+
+    <!-- Total Revenue Summary Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardTotalRevenue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/financeHeader"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#E8F5E9">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvRevenueLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Revenue"
+                android:textColor="#2E7D32"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvTotalRevenue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₱0.00"
+                android:textColor="#1B5E20"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Filter Chips -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFinance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cardTotalRevenue"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFinanceToday"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Day" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFinanceWeek"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Week" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFinanceMonth"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Month" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFinanceYear"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Year"
+            android:checked="true" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- List of Transactions -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFinance"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/chipGroupFinance"
+        android:layout_above="@id/bottomNavigation"
+        android:padding="8dp"/>
+
+    <!-- Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF"
+        app:menu="@menu/admin_bottom_nav"
+        app:itemIconTint="#1A73E8"
+        app:itemTextColor="#1A73E8"
+        app:labelVisibilityMode="labeled" />
+
+</RelativeLayout>
