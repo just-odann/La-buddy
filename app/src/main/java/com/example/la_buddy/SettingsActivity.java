@@ -2,13 +2,17 @@ package com.example.la_buddy;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,12 +24,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private TextView tvName, tvEmail;
     private ImageView imgProfile;
     private String currentUid;
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,20 +49,32 @@ public class SettingsActivity extends AppCompatActivity {
 
         currentUid = FirebaseAuth.getInstance().getUid();
 
-        // 2. Load User Data from Firebase
+        // 2. Register Image Picker Launcher
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri selectedImageUri = result.getData().getData();
+                        imgProfile.setImageURI(selectedImageUri);
+                        uploadImageToFirebase(selectedImageUri);
+                    }
+                }
+        );
+
         if (currentUid != null) {
             loadUserData();
         }
 
-        // 3. Setup Custom Rows (Text and Icons)
         setupSettingsRows();
 
-        // 4. Button Listeners
+        // 3. Button Listeners
         btnBack.setOnClickListener(v -> finish());
 
-        btnEditImage.setOnClickListener(v ->
-                Toast.makeText(this, "Image Picker coming soon!", Toast.LENGTH_SHORT).show()
-        );
+        btnEditImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            imagePickerLauncher.launch(intent);
+        });
 
         btnLogOut.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -68,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void loadUserData() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUid);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -88,34 +107,109 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
+    }
+
+    private void uploadImageToFirebase(Uri uri) {
+        if (uri == null) return;
+
+        StorageReference fileRef = FirebaseStorage.getInstance().getReference("ProfilePics")
+                .child(currentUid + ".jpg");
+
+        fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+            fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(currentUid)
+                        .child("profileImageUrl")
+                        .setValue(downloadUri.toString());
+
+                Toast.makeText(this, "Profile Picture Updated!", Toast.LENGTH_SHORT).show();
+            });
+        }).addOnFailureListener(e -> Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     @SuppressLint("SetTextI18n")
     private void setupSettingsRows() {
-        // Find the <include> views by their IDs in activity_settings.xml
+        // --- 1. EDIT PROFILE DETAILS ---
         View rowProfile = findViewById(R.id.rowProfile);
-        View rowNotifications = findViewById(R.id.rowNotifications);
-        View rowSettings = findViewById(R.id.rowSettings);
-        View rowHelp = findViewById(R.id.rowHelp);
-
-        // Customize Row 1: Profile
-        ((TextView) rowProfile.findViewById(R.id.rowText)).setText("My Account");
+        // Ensure the included layout is clickable
+        rowProfile.setClickable(true);
+        rowProfile.setFocusable(true);
+        ((TextView) rowProfile.findViewById(R.id.rowText)).setText("Edit Profile Details");
         ((ImageView) rowProfile.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_profile);
+        rowProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, EditProfileActivity.class);
+            startActivity(intent);
+        });
 
-        // Customize Row 2: Notifications
-        ((TextView) rowNotifications.findViewById(R.id.rowText)).setText("Notifications");
-        ((ImageView) rowNotifications.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_notification);
+        // --- 2. SAVED ADDRESSES ---
+        View rowNotifications = findViewById(R.id.rowNotifications);
+        rowNotifications.setClickable(true);
+        rowNotifications.setFocusable(true);
+        ((TextView) rowNotifications.findViewById(R.id.rowText)).setText("Saved Addresses");
+        ((ImageView) rowNotifications.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_home);
+        rowNotifications.setOnClickListener(v -> {
+            startActivity(new Intent(SettingsActivity.this, AddressManagerActivity.class));
+        });
 
-        // Customize Row 3: App Settings
-        ((TextView) rowSettings.findViewById(R.id.rowText)).setText("App Settings");
-        ((ImageView) rowSettings.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_settings);
+        // --- 3. PASSWORD & SECURITY ---
+        View rowSettings = findViewById(R.id.rowSettings);
+        rowSettings.setClickable(true);
+        rowSettings.setFocusable(true);
+        ((TextView) rowSettings.findViewById(R.id.rowText)).setText("Password & Security");
+        ((ImageView) rowSettings.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_lock);
+        rowSettings.setOnClickListener(v -> showSecurityDialog());
 
-        // Customize Row 4: Help
-        ((TextView) rowHelp.findViewById(R.id.rowText)).setText("Help & Support");
-        ((ImageView) rowHelp.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_help);
+        // --- 4. ABOUT LA-BUDDY ---
+        View rowHelp = findViewById(R.id.rowHelp);
+        rowHelp.setClickable(true);
+        rowHelp.setFocusable(true);
+        ((TextView) rowHelp.findViewById(R.id.rowText)).setText("About La-buddy");
+        ((ImageView) rowHelp.findViewById(R.id.rowIcon)).setImageResource(R.drawable.ic_info);
+        rowHelp.setOnClickListener(v -> showAboutDialog());
+    }
+
+    private void showSecurityDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Security");
+        builder.setMessage("Would you like us to send a password reset link to your registered email?");
+
+        builder.setPositiveButton("Send Link", (dialog, which) -> {
+            String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            if (email != null) {
+                FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(this, "Reset link sent to your email!", Toast.LENGTH_LONG).show();
+                            }
+                        });
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void showAboutDialog() {
+        com.google.android.material.bottomsheet.BottomSheetDialog aboutSheet =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+
+        View sheetView = getLayoutInflater().inflate(R.layout.layout_about_sheet, null);
+
+        Button btnCall = sheetView.findViewById(R.id.btnCallSupport);
+        btnCall.setOnClickListener(v -> {
+            String phoneNumber = "09123456789";
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:" + phoneNumber));
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "Could not open dialer.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        aboutSheet.setContentView(sheetView);
+        aboutSheet.show();
     }
 }
