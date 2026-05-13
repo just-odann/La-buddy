@@ -48,23 +48,26 @@ public class OrderHistoryActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        // HOME BUTTON
+        // HOME BUTTON: Navigates back to HomeActivity
         findViewById(R.id.navHome).setOnClickListener(v -> {
             Intent intent = new Intent(OrderHistoryActivity.this, HomeActivity.class);
-            // This flag prevents creating a "stack" of activities
+            // This flag ensures we don't build up a massive stack of activities
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish(); // Closes History so Home is the only active screen
+            finish();
         });
 
-        // HISTORY BUTTON (Already here)
+        // HISTORY BUTTON: Already in this activity
         findViewById(R.id.navHistory).setOnClickListener(v -> {
-            Toast.makeText(this, "You are already in History", Toast.LENGTH_SHORT).show();
+            // Optional: Smooth scroll to top instead of a Toast
+            listViewHistory.smoothScrollToPosition(0);
         });
 
-        // SETTINGS BUTTON
+        // SETTINGS BUTTON: Now correctly opens the SettingsActivity
         findViewById(R.id.navSettings).setOnClickListener(v -> {
-            Toast.makeText(this, "Settings coming soon!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(OrderHistoryActivity.this, SettingsActivity.class);
+            // We do NOT call finish() here so the user can press 'back' to return to History
+            startActivity(intent);
         });
     }
 
