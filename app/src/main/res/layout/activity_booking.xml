@@ -5,169 +5,260 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookingActivity"
-    android:background="#F8FAFC">
+    android:background="#F8FAFF"
+    tools:context=".BookingActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/title_book_service"
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:titleTextColor="#1A73E8" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="32dp">
 
+            <!-- SECTION: SERVICE SELECTION -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Book a Service"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="#1A3E6D" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SERVICE CATEGORY"
-                android:textSize="12sp"
+                android:text="@string/header_category"
+                android:letterSpacing="0.05"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#1A73E8"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="12dp"/>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#D1E3FA">
+
                 <LinearLayout
-                    android:padding="16dp"
+                    android:padding="20dp"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Select Category" android:textSize="11sp"/>
-                    <Spinner android:id="@+id/spinnerCategory" android:layout_width="match_parent" android:layout_height="48dp" android:entries="@array/service_categories" />
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" android:layout_marginVertical="12dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Specific Item" android:textSize="11sp"/>
-                    <Spinner android:id="@+id/spinnerItems" android:layout_width="match_parent" android:layout_height="48dp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SOAPS &amp; ADD-ONS"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="#1A73E8"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"/>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
-                <LinearLayout
-                    android:padding="16dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Detergent Choice" android:textSize="11sp"/>
-                    <Spinner android:id="@+id/spinnerDetergent" android:layout_width="match_parent" android:layout_height="48dp" android:entries="@array/detergent_options" />
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" android:layout_marginVertical="12dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fabric Softener" android:textSize="11sp"/>
-                    <Spinner android:id="@+id/spinnerFabcon" android:layout_width="match_parent" android:layout_height="48dp" android:entries="@array/fabcon_options" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <LinearLayout
-                android:id="@+id/layoutLogistics"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="DELIVERY METHOD"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="#1A73E8"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/toggleMethod"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:singleSelection="true"
-                    app:checkedButton="@+id/btnModePickup">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnModePickup"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Pickup &amp; Delivery" /> <com.google.android.material.button.MaterialButton
+                        android:hint="@string/label_category"
+                        app:boxStrokeColor="#1A73E8"
+                        app:hintTextColor="#1A73E8">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingVertical="16dp"
+                            tools:ignore="SpeakableTextPresentCheck" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="@string/label_item"
+                        app:boxStrokeColor="#1A73E8"
+                        app:hintTextColor="#1A73E8">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoItems"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingVertical="16dp"
+                            tools:ignore="SpeakableTextPresentCheck" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SECTION: CUSTOMIZATION -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/header_options"
+                android:letterSpacing="0.05"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#1A73E8"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#D1E3FA">
+
+                <LinearLayout
+                    android:padding="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/label_detergent"
+                        app:boxStrokeColor="#1A73E8">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoDetergent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingVertical="16dp"
+                            tools:ignore="SpeakableTextPresentCheck" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="@string/label_fabcon"
+                        app:boxStrokeColor="#1A73E8">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoFabcon"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingVertical="16dp"
+                            tools:ignore="SpeakableTextPresentCheck" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SECTION: LOGISTICS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/header_logistics"
+                android:letterSpacing="0.05"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#1A73E8"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:checkedButton="@+id/btnModePickup"
+                app:selectionRequired="true">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnModePickup"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="54dp"
+                    android:text="@string/btn_pickup_delivery"
+                    android:textAllCaps="false"
+                    android:textColor="#1A73E8"
+                    app:strokeColor="#1A73E8"
+                    android:textSize="14sp" />
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnModeDropoff"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Walk-in" /> </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="54dp"
+                    android:text="@string/btn_walk_in"
+                    android:textAllCaps="false"
+                    android:textColor="#1A73E8"
+                    app:strokeColor="#1A73E8"
+                    android:textSize="14sp" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardMap"
+            <!-- MAP SECTION (PRESERVED) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMap"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#D1E3FA">
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
+                    android:layout_height="match_parent" />
+            </com.google.android.material.card.MaterialCardView>
 
-                    <fragment
-                        android:id="@+id/map"  android:name="com.google.android.gms.maps.SupportMapFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:layout="@android:layout/simple_gallery_item" />
-                </androidx.cardview.widget.CardView>
+            <!-- DISCOUNT SECTION -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardBackgroundColor="#F0F7FF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+                <RelativeLayout android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_alignParentStart="true" android:layout_toStartOf="@id/switchStudent">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/label_student_saver" android:textStyle="bold" android:textColor="#1A73E8" android:textSize="15sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/desc_student_saver" android:textSize="12sp" android:textColor="#64748B" android:layout_marginTop="2dp"/>
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchStudent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:thumbTint="#1A73E8"
+                        app:trackTint="#B3D7FF"/>
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    app:cardBackgroundColor="#E3F2FD"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
-                    <RelativeLayout android:padding="16dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_alignParentStart="true" android:layout_toStartOf="@id/switchStudent">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Student Saver" android:textStyle="bold" android:textColor="#1A73E8"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply 10% discount on total" android:textSize="11sp" android:textColor="#1A3E6D"/>
-                        </LinearLayout>
-                        <com.google.android.material.switchmaterial.SwitchMaterial
-                            android:id="@+id/switchStudent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <Button
-                    android:id="@+id/btnProcessOrder"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="32dp"
-                    android:backgroundTint="#1A73E8"
-                    android:text="Process Booking"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    app:cornerRadius="12dp" />
-            </LinearLayout>
+            <!-- MAIN ACTION BUTTON -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnProcessOrder"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/btn_process_booking"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#1A73E8"
+                app:elevation="4dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

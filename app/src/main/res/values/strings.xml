@@ -60,7 +60,7 @@
     <string name="desc_loc_pin">Location Pin</string>
     <string name="text_subtitle_laundry">Ready for fresh laundry?</string>
 
-    <string-array name="service_categories">
+    <string-array name="categories">
         <item>Choose a category...</item>
         <item>Regular Services</item>
         <item>Baro\'t Saya &amp; Barong</item>
@@ -109,4 +109,60 @@
     <string name="set_notification">Notifications</string>
     <string name="set_app">My Account</string>
     <string name="set_account">My Account</string>
+
+        <string name="title_book_service">Book a Service</string>
+        <string name="header_category">Service Selection</string>
+        <string name="header_options">Customization &amp; Add-ons</string>
+        <string name="header_logistics">Logistics &amp; Delivery</string>
+
+        <!-- Input Labels -->
+        <string name="label_category">Service Category</string>
+        <string name="label_item">Specific Item</string>
+        <string name="label_detergent">Detergent Choice</string>
+        <string name="label_fabcon">Fabric Softener</string>
+
+        <!-- Discount Section -->
+        <string name="label_student_saver">Student Saver</string>
+        <string name="desc_student_saver">Apply 10% discount with valid ID</string>
+
+        <!-- Buttons -->
+        <string name="btn_pickup_delivery">Pickup &amp; Delivery</string>
+        <string name="btn_walk_in">Walk-in</string>
+        <string name="btn_process_booking">Confirm &amp; Process Booking</string>
+
+        <!-- Arrays for Spinners -->
+        <string-array name="service_categories" tools:ignore="DuplicateDefinition">
+            <item>Wash, Dry &amp; Fold</item>
+            <item>Premium Care / Dry Cleaning</item>
+            <item>Wash, Dry &amp; Ironing</item>
+        </string-array>
+
+    <!-- CATEGORY: WASH, DRY & FOLD -->
+    <string name="cat_wash_dry_fold">WASH, DRY &amp; FOLD</string>
+    <string name="item_clothes">Clothes / Everyday Wear</string>
+    <string name="price_clothes">₱90.00</string>
+    <string name="item_blanket">Blanket / Bed Sheets</string>
+    <string name="price_blanket">₱100.00</string>
+    <string name="item_curtains">Curtains</string>
+    <string name="price_curtains">₱125.00</string>
+    <string name="item_denim">Denim / Jeans</string>
+    <string name="price_denim">₱85.00</string>
+
+    <!-- CATEGORY: PREMIUM CARE / DRY CLEANING -->
+    <string name="cat_premium_dry">PREMIUM CARE / DRY CLEANING</string>
+    <string name="item_dress">Baro\'t Saya (Dress)</string>
+    <string name="price_dress">₱605.00</string>
+    <string name="item_barong_long">Barong (Long Sleeves)</string>
+    <string name="price_barong_long">₱355.00</string>
+    <string name="item_barong_short">Barong (Short Sleeves)</string>
+    <string name="price_barong_short">₱305.00</string>
+
+    <!-- CATEGORY: WASH, DRY & IRONING -->
+    <string name="cat_wash_iron">WASH, DRY &amp; IRONING</string>
+    <string name="item_suit_top">Suit (Top)</string>
+    <string name="price_suit_top">₱350.00</string>
+    <string name="item_suit_bottom">Suit (Bottom)</string>
+    <string name="price_suit_bottom">₱300.00</string>
+    <string name="item_polo_long">Polo (Long Sleeve)</string>
+    <string name="price_polo_long">₱200.00</string>
 </resources>
