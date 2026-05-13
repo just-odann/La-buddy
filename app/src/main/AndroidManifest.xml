@@ -59,10 +59,11 @@
         <activity
             android:name=".AdminFinanceActivity"
             android:exported="false" />
-
-        <!-- 🚨 HERE IS THE FIX: Registering the Chat Activity! 🚨 -->
         <activity
             android:name=".AdminChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
             android:exported="false" />
 
     </application>

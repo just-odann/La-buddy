@@ -34,7 +34,7 @@
 
     <string name="desc_contact_support">Contact Laundry Support</string>
     <string name="desc_profile">Profile</string>
-    <string name="text_greetings">"Good morning, Jordan!"</string>
+    <string name="text_greetings">"Good morning,Buddy!"</string>
     <string name="desc_exit">Exit</string>
     <string name="text_book">"Book a Service"</string>
     <string name="text_order_num">"Order #00001"</string>
@@ -102,4 +102,11 @@
     <string name="btn_confirm_received">CONFIRM RECEIVED</string>
     <string name="desc_message_icon">Message Icon</string>
 
+    <string name="text_logout">Log out</string>
+    <string name="edit">Edit profile info</string>
+    <string name="log_info">loading@example.com</string>
+    <string name="log_name">Loading Name</string>
+    <string name="set_notification">Notifications</string>
+    <string name="set_app">My Account</string>
+    <string name="set_account">My Account</string>
 </resources>

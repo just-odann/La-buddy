@@ -47,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button btnConfirmReceipt;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private String userName = "Customer";
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -409,124 +410,132 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        // Navigation Bar
-        findViewById(R.id.navHome).setOnClickListener(v -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show());
-        findViewById(R.id.navHistory).setOnClickListener(v -> {
-            startActivity(new Intent(HomeActivity.this, OrderHistoryActivity.class));
+        // 1. Home Navigation
+        findViewById(R.id.navHome).setOnClickListener(v ->
+                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
+        );
+
+// 2. History Navigation
+        findViewById(R.id.navHistory).setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, OrderHistoryActivity.class))
+        );
+
+// 3. Settings Navigation - FIX: Use this to open the Activity
+        findViewById(R.id.navSettings).setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, com.example.labuddy.SettingsActivity.class);
+            startActivity(intent);
         });
-        findViewById(R.id.navSettings).setOnClickListener(v -> Toast.makeText(this, "Settings Coming Soon", Toast.LENGTH_SHORT).show());
-    }
 
-    private void uploadImageToFirebase(Uri uri) {
-        if (uri == null) return;
+        private void uploadImageToFirebase(Uri uri) {
+            if (uri == null) return;
 
-        StorageReference fileRef = FirebaseStorage.getInstance().getReference("ProfilePics")
-                .child(currentUid + ".jpg");
+            StorageReference fileRef = FirebaseStorage.getInstance().getReference("ProfilePics")
+                    .child(currentUid + ".jpg");
 
-        fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
-            fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                FirebaseDatabase.getInstance().getReference("Users")
-                        .child(currentUid)
-                        .child("profileImageUrl")
-                        .setValue(downloadUri.toString());
+            fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+                fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                    FirebaseDatabase.getInstance().getReference("Users")
+                            .child(currentUid)
+                            .child("profileImageUrl")
+                            .setValue(downloadUri.toString());
 
-                Toast.makeText(this, "Profile Picture Updated!", Toast.LENGTH_SHORT).show();
-            });
-        }).addOnFailureListener(e -> Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
-
-    private void showBookingUI() {
-        if (timelineContainer != null) timelineContainer.setVisibility(View.VISIBLE);
-        if (activeOrderCard != null) activeOrderCard.setVisibility(View.VISIBLE);
-    }
-
-    private void hideBookingUI() {
-        if (timelineContainer != null) timelineContainer.setVisibility(View.GONE);
-        if (activeOrderCard != null) activeOrderCard.setVisibility(View.GONE);
-    }
-
-    private void setupStepStaticContent() {
-        setStepData(step1, R.drawable.ic_clipboard, "Stage 1", "Received");
-        setStepData(step2, R.drawable.ic_washing_machine, "Stage 2", "Washing");
-        setStepData(step3, R.drawable.ic_drying, "Stage 3", "Drying");
-        setStepData(step4, R.drawable.ic_folding, "Stage 4", "Folding");
-        setStepData(step5, R.drawable.ic_check_circle, "Stage 5", "Ready");
-        setStepData(step6, R.drawable.ic_delivery, "Stage 6", "Out for Delivery");
-        setStepData(step7, R.drawable.ic_home, "Stage 7", "Delivered");
-        setStepData(step8, R.drawable.ic_check_circle, "Stage 8", "Completed");
-    }
-
-    private void setStepData(View view, int iconRes, String stageLabel, String title) {
-        if (view == null) return;
-        ImageView icon = view.findViewById(R.id.stepIcon);
-        TextView label = view.findViewById(R.id.tvStepLabel);
-        TextView stepTitle = view.findViewById(R.id.tvStepTitle);
-        if (icon != null) icon.setImageResource(iconRes);
-        if (label != null) label.setText(stageLabel);
-        if (stepTitle != null) stepTitle.setText(title);
-    }
-
-    private void updateTimelineUI(String currentStatus, String serviceType) {
-        resetAllSteps();
-
-        // Hide steps if it's a Pickup service
-        if ("Pickup".equalsIgnoreCase(serviceType)) {
-            if (step6 != null) step6.setVisibility(View.GONE);
-            if (step7 != null) step7.setVisibility(View.GONE);
-            setStepData(step8, R.drawable.ic_check_circle, "Stage 6", "Picked Up");
-        } else {
-            if (step6 != null) step6.setVisibility(View.VISIBLE);
-            if (step7 != null) step7.setVisibility(View.VISIBLE);
-            setupStepStaticContent();
+                    Toast.makeText(this, "Profile Picture Updated!", Toast.LENGTH_SHORT).show();
+                });
+            }).addOnFailureListener(e -> Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         }
 
-        switch (currentStatus.toUpperCase()) {
-            case "PICKED UP": case "COMPLETED": highlightStep(step8, true);
-            case "DELIVERED": if (step7 != null && step7.getVisibility() == View.VISIBLE) highlightStep(step7, false);
-            case "OUT FOR DELIVERY": if (step6 != null && step6.getVisibility() == View.VISIBLE) highlightStep(step6, false);
-            case "READY": highlightStep(step5, false);
-            case "FOLDING": highlightStep(step4, false);
-            case "DRYING": highlightStep(step3, false);
-            case "WASHING": highlightStep(step2, false);
-            case "RECEIVED": highlightStep(step1, false);
-                break;
+        private void showBookingUI() {
+            if (timelineContainer != null) timelineContainer.setVisibility(View.VISIBLE);
+            if (activeOrderCard != null) activeOrderCard.setVisibility(View.VISIBLE);
+        }
+
+        private void hideBookingUI() {
+            if (timelineContainer != null) timelineContainer.setVisibility(View.GONE);
+            if (activeOrderCard != null) activeOrderCard.setVisibility(View.GONE);
+        }
+
+        private void setupStepStaticContent() {
+            setStepData(step1, R.drawable.ic_clipboard, "Stage 1", "Received");
+            setStepData(step2, R.drawable.ic_washing_machine, "Stage 2", "Washing");
+            setStepData(step3, R.drawable.ic_drying, "Stage 3", "Drying");
+            setStepData(step4, R.drawable.ic_folding, "Stage 4", "Folding");
+            setStepData(step5, R.drawable.ic_check_circle, "Stage 5", "Ready");
+            setStepData(step6, R.drawable.ic_delivery, "Stage 6", "Out for Delivery");
+            setStepData(step7, R.drawable.ic_home, "Stage 7", "Delivered");
+            setStepData(step8, R.drawable.ic_check_circle, "Stage 8", "Completed");
+        }
+
+        private void setStepData(View view, int iconRes, String stageLabel, String title) {
+            if (view == null) return;
+            ImageView icon = view.findViewById(R.id.stepIcon);
+            TextView label = view.findViewById(R.id.tvStepLabel);
+            TextView stepTitle = view.findViewById(R.id.tvStepTitle);
+            if (icon != null) icon.setImageResource(iconRes);
+            if (label != null) label.setText(stageLabel);
+            if (stepTitle != null) stepTitle.setText(title);
+        }
+
+        private void updateTimelineUI(String currentStatus, String serviceType) {
+            resetAllSteps();
+
+            // Hide steps if it's a Pickup service
+            if ("Pickup".equalsIgnoreCase(serviceType)) {
+                if (step6 != null) step6.setVisibility(View.GONE);
+                if (step7 != null) step7.setVisibility(View.GONE);
+                setStepData(step8, R.drawable.ic_check_circle, "Stage 6", "Picked Up");
+            } else {
+                if (step6 != null) step6.setVisibility(View.VISIBLE);
+                if (step7 != null) step7.setVisibility(View.VISIBLE);
+                setupStepStaticContent();
+            }
+
+            switch (currentStatus.toUpperCase()) {
+                case "PICKED UP": case "COMPLETED": highlightStep(step8, true);
+                case "DELIVERED": if (step7 != null && step7.getVisibility() == View.VISIBLE) highlightStep(step7, false);
+                case "OUT FOR DELIVERY": if (step6 != null && step6.getVisibility() == View.VISIBLE) highlightStep(step6, false);
+                case "READY": highlightStep(step5, false);
+                case "FOLDING": highlightStep(step4, false);
+                case "DRYING": highlightStep(step3, false);
+                case "WASHING": highlightStep(step2, false);
+                case "RECEIVED": highlightStep(step1, false);
+                    break;
+            }
+        }
+
+        private void highlightStep(View view, boolean isFinal) {
+            if (view == null) return;
+            int color = isFinal ? Color.parseColor("#2E7D32") : Color.parseColor("#1A73E8");
+            View dot = view.findViewById(R.id.stepDot);
+            View line = view.findViewById(R.id.timelineLine);
+            if (dot != null) dot.getBackground().setTint(color);
+            if (line != null) line.setBackgroundColor(color);
+        }
+
+        private void resetAllSteps() {
+            int grey = Color.parseColor("#D1D9E6");
+            View[] steps = {step1, step2, step3, step4, step5, step6, step7, step8};
+            for (View s : steps) {
+                if (s == null) continue;
+                View dot = s.findViewById(R.id.stepDot);
+                View line = s.findViewById(R.id.timelineLine);
+                if (dot != null) dot.getBackground().setTint(grey);
+                if (line != null) line.setBackgroundColor(grey);
+            }
+        }
+
+        private void handleReadyState(DataSnapshot data) {
+            if (tvSecurityCode == null) return;
+            String code = data.child("pickupCode").getValue(String.class);
+            if (code != null) {
+                tvSecurityCode.setText("Claim Code: " + code);
+                tvSecurityCode.setVisibility(View.VISIBLE);
+            }
+        }
+
+        private void goToLogin() {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         }
     }
-
-    private void highlightStep(View view, boolean isFinal) {
-        if (view == null) return;
-        int color = isFinal ? Color.parseColor("#2E7D32") : Color.parseColor("#1A73E8");
-        View dot = view.findViewById(R.id.stepDot);
-        View line = view.findViewById(R.id.timelineLine);
-        if (dot != null) dot.getBackground().setTint(color);
-        if (line != null) line.setBackgroundColor(color);
-    }
-
-    private void resetAllSteps() {
-        int grey = Color.parseColor("#D1D9E6");
-        View[] steps = {step1, step2, step3, step4, step5, step6, step7, step8};
-        for (View s : steps) {
-            if (s == null) continue;
-            View dot = s.findViewById(R.id.stepDot);
-            View line = s.findViewById(R.id.timelineLine);
-            if (dot != null) dot.getBackground().setTint(grey);
-            if (line != null) line.setBackgroundColor(grey);
-        }
-    }
-
-    private void handleReadyState(DataSnapshot data) {
-        if (tvSecurityCode == null) return;
-        String code = data.child("pickupCode").getValue(String.class);
-        if (code != null) {
-            tvSecurityCode.setText("Claim Code: " + code);
-            tvSecurityCode.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void goToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-}
