@@ -63,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/text_subtitle_laundry"
-                android:textColor="#6B7280"
+                android:textColor="#546E7A"
                 android:textSize="13sp" />
         </LinearLayout>
 
